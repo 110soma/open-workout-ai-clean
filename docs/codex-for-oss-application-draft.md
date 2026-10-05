@@ -2,7 +2,7 @@
 
 Official program page: <https://openai.com/form/codex-for-oss/>
 
-The current official form requires a public GitHub profile and public repository URL. OpenAI says active open-source maintainers may apply and evaluates meaningful usage, adoption, ecosystem importance, and evidence of active maintenance. This candidate is therefore **not yet eligible to submit**.
+Last checked: 2026-10-06. The current official form requires a public GitHub profile and public repository URL. OpenAI says active open-source maintainers may apply and evaluates meaningful usage, adoption, ecosystem importance, and evidence of active maintenance. This candidate is therefore **not yet eligible to submit**.
 
 ## English draft / 日本語訳
 
@@ -53,4 +53,3 @@ Codex will help maintain tests, review pull requests, reproduce issues, prepare 
 API credits would support maintenance automation, regression analysis, structured issue triage, and opt-in experiments for prescription feedback without exposing private workout data.
 
 保守自動化、回帰分析、Issue整理、個人データを外部公開しない任意の処方フィードバック実験に使用。
-

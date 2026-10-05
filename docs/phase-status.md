@@ -5,8 +5,8 @@
 - Phase 2 — Independent OSS copy: **complete**
 - Phase 3 — Demo and own-Supabase setup: **complete for candidate**, brand-new external Supabase verification pending
 - Phase 4 — OSS documents/templates: **complete locally**, final public review pending
-- Phase 5 — Core tests and GitHub Actions file: **complete locally**, hosted Actions not yet run
+- Phase 5 — Core tests, clean clone, and GitHub Actions file: **complete locally**, hosted Actions not yet run
 - Phase 6 — Private Production promotion: **not started by design**
-- Phase 7 — v0.1.0 candidate: **release candidate**, public repository and hosted CI approval pending
+- Phase 7 — v0.1.0 candidate: **release candidate ready locally**, public repository, hosted CI, and release approval pending
 - Phase 8 — Real external users: **not started**
 - Phase 9 — Codex for Open Source application draft: **partial**, public repository/release/usage evidence pending

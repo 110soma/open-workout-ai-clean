@@ -96,7 +96,7 @@ Read [SECURITY.md](SECURITY.md). Real credentials, real workout history, persona
 
 - UI text is primarily Japanese.
 - Multi-user product administration is not complete.
-- Account deletion and full data export need a documented user flow.
+- Data export and account deletion are administrator-run in v0.1; there is no in-app flow yet.
 - A fresh third-party Supabase project has not yet been field-tested; the included migrations and instructions have been reviewed locally.
 - Optional Sheets integration expects a specific schema and is not required for Demo/Supabase use.
 - Formal PR/progression/AI feedback features are outside v0.1.0.

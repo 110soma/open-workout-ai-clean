@@ -18,7 +18,7 @@ React/TypeScript/Vite/PWA、IndexedDB、Workout UI、Prescription Adapter、Sess
 
 ## 5. 応募前に絶対必要
 
-名称・License承認、Public Repository作成、v0.1.0公開、第三者のclean setup確認、export/削除/Backup手順、最終Secret監査です。
+技術面のローカル準備は完了しました。残る必須作業は、Public Repository作成、GitHub上の自動テスト確認、v0.1.0公開です。名称・MIT License・clean setup・データ管理手順・Secret監査は完了しています。
 
 ## 6. あると採択上有利
 
@@ -38,5 +38,4 @@ React/TypeScript/Vite/PWA、IndexedDB、Workout UI、Prescription Adapter、Sess
 
 ## 10. 最短スケジュール
 
-1日3〜4時間作業し、GitHub操作と名前/Licenseをすぐ承認できる前提で、応募可能な最短は3〜5日程度です。採択材料を増やすには、2〜4週間の実利用とIssue/修正/追加Releaseを推奨します。OpenAI側の審査結果や採択は保証できません。
-
+GitHub Repository作成と公開を承認できる前提で、技術的な応募可能状態までは最短1〜2日程度です。採択材料を増やすには、2〜4週間の実利用とIssue対応・追加Releaseを推奨します。OpenAI側の審査結果や採択は保証できません。

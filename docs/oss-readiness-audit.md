@@ -23,9 +23,8 @@ Private `.env*`, `.phase4-private`, `.vercel`, real history JSON, real Prescript
 
 ## Remaining before public release
 
-1. Approve project name and license.
-2. Add one reviewed synthetic screenshot.
-3. Verify setup in a clean directory/machine.
-4. Add user-controlled data export and account/data deletion guidance.
-5. Run one final secret/history scan, then create a new repository with a fresh Git history.
+1. Create the approved GitHub repository and confirm hosted CI.
+2. Perform a final review immediately before the first public push.
+3. Publish v0.1.0 only after explicit maintainer approval.
 
+Completed locally: approved name, formal MIT License, reviewed synthetic screenshot, fresh local clone setup, data-management guidance, working-tree scan, and new-history scan.

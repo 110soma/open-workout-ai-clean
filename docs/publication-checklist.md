@@ -10,9 +10,9 @@
 - [x] GitHub Actions candidate included
 - [x] Project name approved: Open Workout AI
 - [x] Final MIT LICENSE approved and added
-- [ ] Fresh local clone setup verified (separate-machine verification remains recommended)
+- [x] Fresh local clone setup verified (separate-machine verification remains recommended)
 - [x] Data export, account/data deletion, and backup/restore guidance completed
-- [ ] Final manual review of images and every public file
+- [x] Final manual review of the synthetic screenshot and tracked-file audit
 - [ ] New repository creation explicitly approved
 - [ ] Public visibility explicitly approved
 - [ ] v0.1.0 Release explicitly approved

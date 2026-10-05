@@ -18,5 +18,4 @@
 
 ## Release blocker
 
-Run `npm run audit:public` again immediately before creating any public repository. Review binary images manually because text scanners cannot reliably detect personal information inside images.
-
+The working tree and all local OSS commits pass their scanners, and the synthetic screenshot was manually reviewed. Run both `npm run audit:public` and `npm run audit:history` again immediately before the first public push. Hosted GitHub checks remain unverified until a repository exists.
