@@ -1,4 +1,4 @@
-# Open Workout AI (working title)
+# Open Workout AI
 
 Open Workout AI is a local-first PWA that safely turns a workout prescription into an executable session, preserves progress offline, syncs completed records, and validates results before they become official history.
 
@@ -6,7 +6,9 @@ It is not only a workout tracker. It supports the loop:
 
 **Plan → Execute → Record → Validate → Learn → Next Plan**
 
-> Status: private v0.1.0 candidate. The project name and license still require maintainer approval. No public repository or public release exists yet.
+> Status: v0.1.0 release candidate. It has not been published or released yet.
+
+`"private": true` in `package.json` intentionally prevents accidental npm publication. It does not prevent a future public GitHub repository.
 
 ## Why this is different
 
@@ -39,6 +41,13 @@ Requirements: Node.js 22+ and npm.
 ```bash
 npm ci
 npm run dev
+```
+
+On Windows PowerShell, use:
+
+```powershell
+npm.cmd ci
+npm.cmd run dev
 ```
 
 Open the shown local URL. Without Supabase settings, the app automatically uses Demo mode. Demo data is synthetic, stored in a separate browser database, and is not sent to cloud or official-save endpoints.
@@ -88,6 +97,7 @@ Read [SECURITY.md](SECURITY.md). Real credentials, real workout history, persona
 - UI text is primarily Japanese.
 - Multi-user product administration is not complete.
 - Account deletion and full data export need a documented user flow.
+- A fresh third-party Supabase project has not yet been field-tested; the included migrations and instructions have been reviewed locally.
 - Optional Sheets integration expects a specific schema and is not required for Demo/Supabase use.
 - Formal PR/progression/AI feedback features are outside v0.1.0.
 
@@ -101,4 +111,4 @@ AIなどが作ったトレーニングメニューをPWAで実施し、通信が
 
 ## Contributing and license
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). MIT is the proposed license, but the final license has not been approved; see `LICENSE-CANDIDATE.md`.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Open Workout AI is licensed under the [MIT License](LICENSE).

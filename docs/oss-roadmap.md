@@ -2,12 +2,9 @@
 
 ## A — required for safe public v0.1.0
 
-- Data export
-- Account/data deletion instructions and tested deletion path
-- Backup/restore instructions
 - Clean-machine setup verification
-- Final name/license approval
 - Final secret and screenshot review
+- Public repository creation and hosted CI confirmation
 
 ## B — helpful before an application, not required to publish
 
@@ -28,8 +25,10 @@
 - Preference editor
 - Advanced supersets
 - Full multi-user administration
+- In-app data export
+- In-app account/data deletion
+- Guided backup/restore UI
 
 ## Production path for the private app
 
 Keep using the protected Preview for several normal workouts. Promote only after repeated success for active recovery, offline recovery, sync, staging, de-duplication, readback, and official-save status. Production promotion is separate from OSS publication and requires explicit approval plus a rollback deployment.
-

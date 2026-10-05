@@ -6,7 +6,7 @@ Local-first workout execution from a prescription, stable sessions/sets, offline
 
 ## Not yet available
 
-One-click optional Sheets template setup, complete data export/deletion UI, formal PR/progression, AI feedback, AI-generated plans, and full localization.
+One-click optional Sheets template setup, in-app data export/deletion UI, formal PR/progression, AI feedback, AI-generated plans, and full localization.
 
 ## Known issues
 
@@ -14,6 +14,7 @@ One-click optional Sheets template setup, complete data export/deletion UI, form
 - The main browser bundle is larger than the preferred warning threshold.
 - Optional Sheets gateway requires a compatible workbook schema.
 - GitHub Actions is configured but cannot run until a repository exists.
+- Setup in a brand-new third-party Supabase project has not yet been field-tested.
 
 ## Security notes
 
@@ -22,4 +23,3 @@ Use only a Supabase publishable key in `VITE_*`. Keep administrative and Google 
 ## Upgrade notes
 
 This is the first candidate. No prior public schema is supported.
-

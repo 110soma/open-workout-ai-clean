@@ -2,6 +2,9 @@ node_modules/
 dist/
 playwright-report/
 test-results/
+coverage/
+*.tsbuildinfo
+.DS_Store
 .npm-cache/
 .vercel/
 .phase4-private/
@@ -12,4 +15,3 @@ test-results/
 *.pem
 *.key
 *service-account*.json
-

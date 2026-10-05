@@ -1,8 +1,7 @@
-# Name options (approval required)
+# Project name decision
 
-1. **Open Workout AI** — most direct; clearly communicates the current concept.
-2. **Workout Loop** — short; emphasizes Plan → Execute → Learn, but “AI” is less visible.
-3. **Open Training Loop** — broader and descriptive, but longer and may sound less workout-specific.
+- Project name: **Open Workout AI**
+- Repository/package name: **open-workout-ai**
+- License: **MIT**
 
-Recommendation: keep **Open Workout AI** unless a final repository/package-name availability check finds a collision. No final name has been selected.
-
+The name is fixed for the v0.1.0 release candidate. Public repository creation and a final GitHub name-availability check still require maintainer approval.
