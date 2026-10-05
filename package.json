@@ -1,0 +1,35 @@
+{
+  "name": "open-workout-ai-candidate",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:large": "vitest run tests/large-data.test.ts --reporter=verbose",
+    "test:e2e": "playwright test tests/e2e/demo.spec.ts",
+    "audit:public": "node scripts/oss-audit.mjs",
+    "verify": "npm test && npm run build && npm run test:e2e && npm run audit:public"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "@vitejs/plugin-react": "latest",
+    "dexie": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest",
+    "vite-plugin-pwa": "latest"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "fake-indexeddb": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}

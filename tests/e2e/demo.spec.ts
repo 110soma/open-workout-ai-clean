@@ -1,0 +1,26 @@
+import {test,expect} from '@playwright/test';
+test('demo isolates data and never requests cloud or official save', async ({page}) => {
+  const outgoing: string[] = [];
+  const errors: string[] = [];
+  page.on('request',r => {if(r.url().includes('supabase.co') || r.url().includes('/api/') || r.url().includes('/data/')) outgoing.push(r.url());});
+  page.on('pageerror',e => errors.push(e.message));
+  await page.goto('/?demo=1');
+  await expect(page.getByLabel('休憩タイマー')).toBeVisible();
+  await expect(page.getByText('操作デモ・外部送信なし')).toBeVisible();
+  await page.getByRole('button',{name:'休憩終了の光り方を見る'}).click();
+  await expect(page.getByLabel('休憩タイマー')).toHaveClass(/rest-finished/);
+  const box=await page.getByRole('button',{name:'次のセットへ'}).boundingBox();
+  expect(box!.y+box!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+  await page.getByRole('button',{name:'次のセットへ'}).click();
+  await page.locator('.live-set').nth(1).getByRole('button',{name:'セット完了',exact:true}).click();
+  await page.getByRole('dialog',{name:'実際のRIRを選択'}).getByRole('button',{name:'未入力'}).click();
+  await page.getByRole('button',{name:'次のセットへ'}).click();
+  await page.getByRole('button',{name:'トレーニング終了',exact:true}).click();
+  await page.getByRole('button',{name:'デモを終了（送信なし）'}).click();
+  await expect(page.getByText('デモ完了・外部送信なし')).toBeVisible();
+  const names=await page.evaluate(async()=> (await indexedDB.databases()).map(d=>d.name));
+  expect(names).toContain('open-workout-ai-demo');
+  expect(names).not.toContain('open-workout-ai');
+  expect(outgoing).toEqual([]);
+  expect(errors).toEqual([]);
+});

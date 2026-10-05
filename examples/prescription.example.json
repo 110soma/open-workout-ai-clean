@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "dataRevision": "example-1",
+  "source": { "spreadsheetTitle": "Example data", "spreadsheetId": "example-only", "exportedAt": "2030-01-15T08:00:00.000Z", "mode": "read_only_snapshot", "tabs": [] },
+  "latestPrescriptionDate": "2030-01-15",
+  "targetSessionId": "example-20300115-01",
+  "prescriptions": [
+    { "prescription_id": "example-row-1", "target_session_id": "example-20300115-01", "exercise_id": "EXAMPLE_PRESS", "exercise_order": 1, "target_sets": 3, "target_load_kg": 40, "target_rep_min": 8, "target_rep_max": 10, "target_RPE": null, "target_RIR": 2, "target_rest_sec": 90, "progression_action": null, "rationale": null, "created_at": "2030-01-15T08:00:00.000Z", "status": "issued", "rule_version": "example", "tempo": null, "technique_variant_id": null, "technique_variant_version": null, "variant_status": null, "equipment": "machine", "attachment": null, "grip": "neutral" },
+    { "prescription_id": "example-row-2", "target_session_id": "example-20300115-01", "exercise_id": "EXAMPLE_ROW", "exercise_order": 2, "target_sets": 2, "target_load_kg": 12, "target_rep_min": 10, "target_rep_max": 12, "target_RPE": null, "target_RIR": 2, "target_rest_sec": 75, "progression_action": null, "rationale": null, "created_at": "2030-01-15T08:00:00.000Z", "status": "issued", "rule_version": "example", "tempo": null, "technique_variant_id": null, "technique_variant_version": null, "variant_status": null, "equipment": "dumbbell", "attachment": null, "grip": "neutral" }
+  ],
+  "exercises": [
+    { "exercise_id": "EXAMPLE_PRESS", "exercise_name": "Example Press", "equipment": "machine", "increment_kg": 5, "unilateral": false, "note": "Synthetic fixture", "primary_bodypart": "Shoulders" },
+    { "exercise_id": "EXAMPLE_ROW", "exercise_name": "Example One-arm Row", "equipment": "dumbbell", "increment_kg": 2, "unilateral": true, "note": "Synthetic fixture", "primary_bodypart": "Back" }
+  ],
+  "guides": [],
+  "slotRoles": []
+}

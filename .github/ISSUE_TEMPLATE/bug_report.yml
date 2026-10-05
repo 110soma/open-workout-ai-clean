@@ -1,0 +1,19 @@
+name: Bug report
+description: Report a reproducible problem without private workout data or secrets.
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: What happened?, description: Do not include keys, tokens, email addresses, or real workout history. }
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes: { label: Steps to reproduce }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Version }
+  - type: dropdown
+    id: mode
+    attributes: { label: Mode, options: [Demo, Supabase-connected, Optional Sheets gateway] }
+

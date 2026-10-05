@@ -1,0 +1,17 @@
+{
+  "workout_id": "example-session-20300115-01",
+  "date": "2030-01-15",
+  "title": "Example Workout",
+  "bodypart": "Shoulders",
+  "source": "prescription_snapshot",
+  "status": "active",
+  "exercises": [],
+  "rest_started_at": null,
+  "rest_end_at": null,
+  "last_completed_set_id": null,
+  "started_at": "2030-01-15T09:00:00.000Z",
+  "completed_at": null,
+  "created_at": "2030-01-15T09:00:00.000Z",
+  "updated_at": "2030-01-15T09:00:00.000Z"
+}
+

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+.npm-cache/
+.vercel/
+.phase4-private/
+.env*
+!.env.example
+!.env.server.example
+*.local
+*.pem
+*.key
+*service-account*.json
+
