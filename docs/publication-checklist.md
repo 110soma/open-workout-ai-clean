@@ -20,7 +20,8 @@
 - [x] Account/project local storage isolation, safe auth transitions and wrong-owner upload protection tested
 - [x] Connected empty startup and example-plan import tested without private snapshots
 - [x] Experimental Sheets gateway restricted to exactly one configured owner
-- [ ] Review provider-retained old commit objects before changing visibility
+- [x] Approved independent clean Private repository created; old archive remains Private
+- [x] All five old pre-cleanup commits are unavailable from the new repository
 - [ ] Independent re-audit of blocker fixes
 - [ ] Public visibility explicitly approved
 - [ ] v0.1.0 Release explicitly approved

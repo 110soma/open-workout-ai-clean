@@ -1,5 +1,10 @@
 # Public blocker fixes
 
+**Migration update:** the approved clean Private repository now replaces the
+old repository as the OSS candidate. See [Clean repository migration](clean-repository-migration.md).
+The retained-object blocker below applies to the old Private archive, which
+must never be made Public. It was isolated, not erased.
+
 Scope: independent OSS candidate and its Private GitHub repository only.
 The live workout app, deployments, actual Supabase/Sheets and credentials were
 not changed. No public publication or release was performed.
