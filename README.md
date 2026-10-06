@@ -8,7 +8,7 @@ It is not only a workout tracker. It supports the loop:
 
 > Status: v0.1.0 release candidate. It has not been published or released yet.
 
-> Implementation fixes from the [independent audit](docs/final-public-audit.md) are documented in the [blocker-resolution report](docs/blocker-resolution.md). Public visibility is still blocked by provider-retained old history; release and visibility require maintainer approval.
+> The independent clean repository passed the final pre-publication audit (`PUBLIC_GO`). The old pre-cleanup history is not available from this repository. See the [blocker-resolution report](docs/blocker-resolution.md) and [clean repository migration](docs/clean-repository-migration.md). The repository remains Private; Public visibility and the v0.1.0 release require separate maintainer approval.
 
 `"private": true` in `package.json` intentionally prevents accidental npm publication. It does not prevent a future public GitHub repository.
 
@@ -53,6 +53,8 @@ npm.cmd run dev
 ```
 
 Open the shown local URL. Without Supabase settings, the app automatically uses Demo mode. Demo data is synthetic, stored in a separate browser database, and is not sent to cloud or official-save endpoints.
+
+Demo mode has been verified in mobile (390×844) and desktop (1440×900) browser tests, including local recovery, completion, and no external requests. Supabase-connected startup and account isolation are tested with local mock responses and an isolated database engine. A third party's first installation using a new real Supabase project has **not been field-tested**. Google Sheets remains an optional, experimental integration.
 
 ## Connect your own Supabase
 
