@@ -27,6 +27,19 @@ Git rewriting controls reachable publishable history; it does **not** guarantee
 that the hosting provider has erased old unreferenced objects or cached views.
 Provider-retained old objects must be reviewed before Public visibility.
 
+After the authorized force-with-lease update, a read-only GitHub API check still
+returned HTTP 200 for an old commit. Its personal author metadata and the old
+private-origin plan identifier were still retrievable. Values are not recorded
+here. Thus **four blockers are fully closed; the GitHub-side history blocker is
+partially resolved**. This repository must remain Private.
+
+GitHub's [official removal guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
+explains that rewritten/force-pushed history can remain available in cached
+views. Server-side removal requires provider assistance and is not guaranteed
+for data the provider deems non-sensitive. Alternatives requiring owner approval
+are a removal request or a fresh Private repository containing only the verified
+clean history. No support message, repository deletion or replacement was made.
+
 ## Account isolation
 
 Each project/account has its own IndexedDB, with an explicit owner marker.
@@ -72,6 +85,9 @@ boundary. No user-supplied body field can bypass it.
 
 - Unit suite includes owner/set foreign-key protection, auth isolation,
   example import, gateway denial and audit regression checks.
+- All **68 unit tests** passed. All **four browser tests** passed across the two
+  requested sizes. A fresh local clone in a normal temporary folder passed
+  `npm ci` and the complete `npm run verify` without reused dependencies or env.
 - Mobile 390×844 and desktop 1440×900 browser checks cover no-cloud Demo,
   connected clean-start, plan/start, active reload, account switching and
   pending upload ownership. Supabase responses are mocked locally.
@@ -79,6 +95,11 @@ boundary. No user-supplied body field can bypass it.
 - Dependency audit reported zero known vulnerabilities during this work.
 - Working files and complete publishable history are audited before the remote
   history update. Hosted CI results must be checked for the exact pushed main.
+
+The first clean-test location was inside a `.git` directory, which Vite refuses
+to serve. That location failed browser tests; a new ordinary temporary clone
+resolved the location issue without weakening Vite's file-access restrictions.
+Both the project and fresh clone then passed the requested checks.
 
 ## Recovery and remaining scope
 

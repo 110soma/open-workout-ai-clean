@@ -8,7 +8,7 @@ It is not only a workout tracker. It supports the loop:
 
 > Status: v0.1.0 release candidate. It has not been published or released yet.
 
-> The findings from the [independent audit](docs/final-public-audit.md) are addressed by the [blocker-resolution report](docs/blocker-resolution.md). Public visibility and release still require maintainer approval.
+> Implementation fixes from the [independent audit](docs/final-public-audit.md) are documented in the [blocker-resolution report](docs/blocker-resolution.md). Public visibility is still blocked by provider-retained old history; release and visibility require maintainer approval.
 
 `"private": true` in `package.json` intentionally prevents accidental npm publication. It does not prevent a future public GitHub repository.
 

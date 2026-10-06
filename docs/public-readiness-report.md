@@ -6,6 +6,8 @@ The release candidate is stored in a Private GitHub Repository. Demo install, Wo
 
 See [Blocker resolution](blocker-resolution.md) for the subsequent security fixes, verification scope and remaining publication checks. A passing scanner alone is not an independent security approval.
 
+**Current publication decision: NO.** Clean reachable history and local checks pass, but GitHub still serves old private-origin objects by their old commit IDs. Keep this existing repository Private until that retention is resolved or an approved clean repository replaces it.
+
 ## External actions intentionally not performed
 
 - Public push or visibility change
