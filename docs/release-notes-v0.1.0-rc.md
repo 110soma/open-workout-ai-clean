@@ -31,7 +31,7 @@ Demo mode has been verified at 390×844 and 1440×900, including local recovery,
 
 ## Setup with your own Supabase
 
-Create your own Supabase project and Authentication user, apply migrations `0001` through `0005` in order, copy `.env.example` to `.env.local`, and set the Project URL and publishable key. Set `VITE_DEMO_MODE=false`, import an example prescription using the documented SQL generator, and sign in. Keep test record mode and automatic finalization disabled while trying the example.
+Create your own Supabase project and Authentication user, apply migrations `0001` through `0005` in order, copy `.env.example` to `.env.local`, and set the Project URL and publishable key. Set `VITE_DEMO_MODE=false`, import an example prescription using the documented SQL generator, and sign in. Use `VITE_WORKOUT_RECORD_MODE=test` and keep `VITE_AUTO_FINALIZE=false` while trying the example.
 
 Follow the [setup guide](https://github.com/110soma/open-workout-ai-clean/blob/main/docs/setup.md). Connected startup, ownership rules and example import are tested with local mocks and an isolated database engine. **A third party's first installation using a new real Supabase project has not been field-tested.**
 
