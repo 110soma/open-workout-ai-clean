@@ -20,9 +20,13 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }
     }
   ],
-  webServer: externalBaseURL ? undefined : {
+  webServer: externalBaseURL ? undefined : [{
     command: "node ./node_modules/vite/bin/vite.js preview --strictPort",
     url: "http://127.0.0.1:4174",
-    reuseExistingServer: true
-  }
+    reuseExistingServer: !process.env.CI
+  }, {
+    command: 'node scripts/start-selfhost-test.mjs',
+    url: 'http://127.0.0.1:4175',
+    reuseExistingServer: !process.env.CI
+  }]
 });

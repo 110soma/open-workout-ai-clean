@@ -54,7 +54,7 @@ describe("Prescription cache identity", () => {
     await database.meta.put({ key: "prescriptionId", value: next.targetSessionId });
     await database.meta.put({ key: "prescriptionRevision", value: next.dataRevision });
 
-    expect((await loadPrescriptionBundle(database)).targetSessionId).toBe("example-20300116-01");
+    expect((await loadPrescriptionBundle(database))?.targetSessionId).toBe("example-20300116-01");
   });
 
   it("古い未開始メニューだけを差し替え、activeは上書きしない", async () => {

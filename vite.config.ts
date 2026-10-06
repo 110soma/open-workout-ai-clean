@@ -27,7 +27,6 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,json}"],
-        globIgnores: ["data/history-v1.json", "data/prescription-v1.json"],
         navigateFallback: "index.html",
         cleanupOutdatedCaches: true
       },

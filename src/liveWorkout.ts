@@ -2,7 +2,6 @@ import { db, type WorkoutDatabase } from "./db";
 import { dateKey } from "./date";
 import { measureAsync } from "./performance";
 import { recordMetric } from "./performance";
-import { BUNDLED_PRESCRIPTION_REVISION } from "./generated/prescriptionRevision";
 import { adaptPrescriptionBundle } from "./prescriptionAdapter";
 import { requestBackgroundSync } from "./sync/cloudSync";
 import type { LiveWorkout, LiveWorkoutExercise, LiveWorkoutSet, PrescriptionBundle } from "./types";
@@ -96,19 +95,19 @@ export function createDemoWorkout(date = dateKey(new Date())): LiveWorkout {
 export const isPrescriptionForDate = (bundle: PrescriptionBundle, date: string): boolean =>
   bundle.latestPrescriptionDate === date;
 
-export async function loadOrCreateTodayWorkout(): Promise<LiveWorkout | null> {
+export async function loadOrCreateTodayWorkout(database: WorkoutDatabase = db): Promise<LiveWorkout | null> {
   return measureAsync("today:load", async () => {
     const date = dateKey(new Date());
-    const rows = await db.liveWorkouts.where("date").equals(date).toArray();
+    const rows = await database.liveWorkouts.where("date").equals(date).toArray();
     const protectedWorkout =
       rows.find((row) => row.status === "active") ??
       [...rows]
         .filter((row) => row.status === "completed_local" || row.status === "committed")
         .sort((a, b) => b.updated_at.localeCompare(a.updated_at))[0];
     if (protectedWorkout) return protectedWorkout;
-    const bundle = await loadPrescriptionBundle();
-    if (!isPrescriptionForDate(bundle, date)) return null;
-    return reconcilePrescriptionWorkout(bundle, date);
+    const bundle = await loadPrescriptionBundle(database);
+    if (!bundle || !isPrescriptionForDate(bundle, date)) return null;
+    return reconcilePrescriptionWorkout(bundle, date, database);
   });
 }
 
@@ -152,7 +151,7 @@ export async function createAdditionalWorkout(): Promise<LiveWorkout> {
   if (currentDraft) return currentDraft;
 
   const bundle = await loadPrescriptionBundle();
-  if (!isPrescriptionForDate(bundle, date)) throw new Error("今日のメニューはまだありません。");
+  if (!bundle || !isPrescriptionForDate(bundle, date)) throw new Error("今日のメニューはまだありません。");
   const workout = adaptPrescriptionBundle(bundle, date);
   await db.liveWorkouts.put(workout);
   return workout;
@@ -190,7 +189,7 @@ export function activatePlannedWorkout(workout: LiveWorkout, startedAt = new Dat
   };
 }
 
-export async function loadPrescriptionBundle(database: WorkoutDatabase = db): Promise<PrescriptionBundle> {
+export async function loadPrescriptionBundle(database: WorkoutDatabase = db): Promise<PrescriptionBundle | null> {
   return measureAsync("prescription:idb:get", async () => {
     const [selectedId, revision] = await Promise.all([
       database.meta.get("prescriptionId"),
@@ -209,28 +208,13 @@ export async function loadPrescriptionBundle(database: WorkoutDatabase = db): Pr
         return cached.bundle;
       }
     }
-    const response = await fetch("/data/prescription-v1.json", { cache: "no-cache" });
-    if (!response.ok) throw new Error(`Prescriptionを読み込めませんでした (${response.status})`);
-    const bundle = (await response.json()) as PrescriptionBundle;
-    if (bundle.dataRevision !== BUNDLED_PRESCRIPTION_REVISION) throw new Error("Prescriptionの版が一致しません。");
-    const updatedAt = new Date().toISOString();
-    await database.transaction("rw", database.prescriptions, database.meta, async () => {
-      await database.prescriptions.put({
-        prescription_id: bundle.targetSessionId,
-        date: bundle.latestPrescriptionDate,
-        revision: bundle.dataRevision,
-        updated_at: updatedAt,
-        bundle
-      });
-      await database.meta.put({ key: "prescriptionId", value: bundle.targetSessionId });
-      await database.meta.put({ key: "prescriptionRevision", value: bundle.dataRevision });
-      await database.meta.put({ key: "prescriptionImportedAt", value: updatedAt });
-    });
-    return bundle;
+    return null;
   });
 }
 
 let saveQueue = Promise.resolve();
+
+export function flushWorkoutSaves(): Promise<void> { return saveQueue; }
 
 export function replaceLiveWorkout(previousWorkoutId: string, workout: LiveWorkout, database: WorkoutDatabase = db): Promise<void> {
   const snapshot = structuredClone(workout);

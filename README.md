@@ -8,6 +8,8 @@ It is not only a workout tracker. It supports the loop:
 
 > Status: v0.1.0 release candidate. It has not been published or released yet.
 
+> The findings from the [independent audit](docs/final-public-audit.md) are addressed by the [blocker-resolution report](docs/blocker-resolution.md). Public visibility and release still require maintainer approval.
+
 `"private": true` in `package.json` intentionally prevents accidental npm publication. It does not prevent a future public GitHub repository.
 
 ## Why this is different
@@ -59,6 +61,7 @@ Open the shown local URL. Without Supabase settings, the app automatically uses 
 3. Copy `.env.example` to `.env.local`.
 4. Set only your Supabase Project URL and publishable key in the `VITE_*` variables.
 5. Set `VITE_DEMO_MODE=false`.
+6. Follow the [example-prescription import steps](docs/setup.md#example-prescription) and sign in. A new account starts empty; no private snapshots are required.
 
 Never place a service-role key or secret key in a `VITE_*` variable. `VITE_*` values are visible in the browser.
 
@@ -75,7 +78,7 @@ These are fictional fixtures. They are not real users or real workout history.
 
 ## Optional Google Sheets integration
 
-The core app works without Google Sheets. The optional server gateway can stage, validate, de-duplicate, write, and read back an official record. It requires server-only credentials and a compatible workbook schema. See [Optional Sheets adapter](docs/optional-google-sheets.md).
+The core app works without Google Sheets. The experimental optional gateway is restricted to exactly one configured account and is disabled by default. It requires server-only credentials and a compatible workbook schema. See [Optional Sheets adapter](docs/optional-google-sheets.md).
 
 ## Testing
 
@@ -86,7 +89,7 @@ npm run test:e2e
 npm run audit:public
 ```
 
-`npm run verify` runs all four checks. GitHub Actions is configured to run the same checks after a repository is created.
+`npm run verify` runs tests, build, browser checks, working-file audit and complete Git-history audit. GitHub Actions runs the same checks without application secrets.
 
 ## Security
 
@@ -96,9 +99,10 @@ Read [SECURITY.md](SECURITY.md). Real credentials, real workout history, persona
 
 - UI text is primarily Japanese.
 - Multi-user product administration is not complete.
+- Local storage is isolated by Supabase project and account. Switching accounts remounts the app; unowned data from older candidates is never automatically assigned to an account.
 - Data export and account deletion are administrator-run in v0.1; there is no in-app flow yet.
 - A fresh third-party Supabase project has not yet been field-tested; the included migrations and instructions have been reviewed locally.
-- Optional Sheets integration expects a specific schema and is not required for Demo/Supabase use.
+- Optional Sheets integration is experimental, single-owner, and expects a specific schema. It is not required for Demo/Supabase use.
 - Formal PR/progression/AI feedback features are outside v0.1.0.
 
 ## Roadmap

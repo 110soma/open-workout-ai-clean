@@ -1,7 +1,7 @@
 import type { Session } from "@supabase/supabase-js";
-import { db } from "../db";
+import { assertAccountOwner, db } from "../db";
 import { dateKey } from "../date";
-import { isPrescriptionForDate, reconcilePrescriptionWorkout } from "../liveWorkout";
+import { flushWorkoutSaves, isPrescriptionForDate, reconcilePrescriptionWorkout } from "../liveWorkout";
 import type { LiveWorkout, PrescriptionBundle } from "../types";
 import { isSupabaseConfigured, supabase } from "./supabaseClient";
 import { syncPendingWorkouts, type WorkoutPushGateway } from "./syncEngine";
@@ -16,6 +16,7 @@ export interface CloudState {
   syncing: boolean;
   lastError: string | null;
   prescriptionRevision: string | null;
+  accountChanging: boolean;
 }
 
 let state: CloudState = {
@@ -23,7 +24,8 @@ let state: CloudState = {
   session: null,
   syncing: false,
   lastError: null,
-  prescriptionRevision: null
+  prescriptionRevision: null,
+  accountChanging: false
 };
 let syncPromise: Promise<void> | null = null;
 const configuredRecordMode = import.meta.env.VITE_WORKOUT_RECORD_MODE;
@@ -42,6 +44,9 @@ class SupabaseWorkoutGateway implements WorkoutPushGateway {
 
   async pushWorkout(workout: LiveWorkout): Promise<{ server_updated_at: string }> {
     if (!supabase) throw new Error("Supabase is not configured");
+    assertAccountOwner(db, this.userId);
+    const { data: auth } = await supabase.auth.getSession();
+    if (state.accountChanging || auth.session?.user.id !== this.userId) throw new Error('account_changed_before_upload');
     const now = workout.local_updated_at ?? workout.updated_at;
     const sessionRow = {
       session_id: workout.workout_id,
@@ -88,6 +93,8 @@ class SupabaseWorkoutGateway implements WorkoutPushGateway {
       local_updated_at: now
     })));
     if (setRows.length > 0) {
+      const { data: auth } = await supabase.auth.getSession();
+      if (state.accountChanging || auth.session?.user.id !== this.userId) throw new Error('account_changed_before_upload');
       const { error: setsError } = await supabase.from("workout_sets").upsert(setRows, { onConflict: "set_id" });
       if (setsError) throw setsError;
     }
@@ -97,6 +104,7 @@ class SupabaseWorkoutGateway implements WorkoutPushGateway {
 
 export async function refreshPrescriptionFromCloud(session: Session): Promise<boolean> {
   if (!supabase) return false;
+  assertAccountOwner(db, session.user.id);
   const { data, error } = await supabase
     .from("prescriptions")
     .select("prescription_id,prescription_date,source_revision,payload,server_updated_at")
@@ -130,6 +138,13 @@ export async function refreshPrescriptionFromCloud(session: Session): Promise<bo
     await db.meta.put({ key: "prescriptionImportedAt", value: updatedAt });
   });
 
+  // The example/import payload is also the initial exercise catalogue.
+  await db.exercises.bulkPut(bundle.exercises.map(exercise => ({
+    exercise_id: exercise.exercise_id, exercise_name: exercise.exercise_name,
+    equipment: exercise.equipment ?? null, primary_bodypart: exercise.primary_bodypart ?? null,
+    unilateral: exercise.unilateral ?? false, aliases: null, category: null, movement: null, enabled: true
+  })));
+
   const today = dateKey(new Date());
   if (isPrescriptionForDate(bundle, today)) await reconcilePrescriptionWorkout(bundle, today);
   publish();
@@ -138,6 +153,7 @@ export async function refreshPrescriptionFromCloud(session: Session): Promise<bo
 
 export async function restoreCompletedWorkoutsFromCloud(session: Session): Promise<{ restored: number; conflicts: number }> {
   if (!supabase) return { restored: 0, conflicts: 0 };
+  assertAccountOwner(db, session.user.id);
   const sessionResult = await supabase
     .from("workout_sessions")
     .select("session_id,session_date,status,record_mode,workout_payload,local_updated_at,server_updated_at")
@@ -165,7 +181,7 @@ export async function restoreCompletedWorkoutsFromCloud(session: Session): Promi
 }
 
 export function requestBackgroundSync(): void {
-  if (!isSupabaseConfigured || !supabase || syncPromise || !navigator.onLine) return;
+  if (!isSupabaseConfigured || !supabase || syncPromise || state.accountChanging || !db.accountId || !navigator.onLine) return;
   syncPromise = (async () => {
     publish({ syncing: true, lastError: null });
     try {
@@ -174,6 +190,7 @@ export function requestBackgroundSync(): void {
       const session = data.session;
       publish({ session });
       if (!session) return;
+      assertAccountOwner(db, session.user.id);
       const issues: string[] = [];
       let restore = { restored: 0, conflicts: 0 };
       try { restore = await restoreCompletedWorkoutsFromCloud(session); }
@@ -201,13 +218,20 @@ export function startCloudSync(): () => void {
   const onVisible = () => { if (document.visibilityState === "visible") requestBackgroundSync(); };
   window.addEventListener("online", onOnline);
   document.addEventListener("visibilitychange", onVisible);
-  const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+  const handleSession = (session: Session | null) => {
+    if ((session?.user.id ?? null) !== db.accountId) {
+      publish({ session, accountChanging: true, prescriptionRevision: null });
+      // A full remount prevents stale component state and in-flight callbacks
+      // from being reused under another account. Existing local DBs are retained.
+      queueMicrotask(() => { void flushWorkoutSaves().then(() => window.location.reload()); });
+      return;
+    }
     publish({ session });
     if (session) queueMicrotask(requestBackgroundSync);
-  });
+  };
+  const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => handleSession(session));
   void supabase.auth.getSession().then(({ data }) => {
-    publish({ session: data.session });
-    requestBackgroundSync();
+    handleSession(data.session);
   });
   return () => {
     window.removeEventListener("online", onOnline);
@@ -225,7 +249,9 @@ export async function signIn(email: string, password: string): Promise<void> {
 
 export async function signOut(): Promise<void> {
   if (!supabase) return;
+  publish({ accountChanging: true });
+  await flushWorkoutSaves();
   const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  if (error) { publish({ accountChanging: false }); throw error; }
   publish({ session: null });
 }

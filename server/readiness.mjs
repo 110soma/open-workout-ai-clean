@@ -2,7 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { GoogleSheets } from './google-sheets.mjs';
 import { SheetsGateway } from './sheets-gateway.mjs';
 import { readEditCapability } from './google-permission.mjs';
+import { isSheetsOwnerAllowed } from './sheets-access.mjs';
 export async function checkServerReadiness(env=process.env) {
+ if(!isSheetsOwnerAllowed(env.WORKOUT_SHEETS_OWNER_USER_ID,env.WORKOUT_SHEETS_OWNER_USER_ID)) return {status:'SHEETS_OWNER_CONFIGURATION_REQUIRED',writes:0,enabled:false};
  const required=['VITE_SUPABASE_URL','SUPABASE_COMMIT_SECRET','GOOGLE_SHEETS_CLIENT_EMAIL','GOOGLE_SHEETS_PRIVATE_KEY','GOOGLE_SHEETS_SPREADSHEET_ID'];
  if(required.some(k=>!env[k])) return {status:'SETUP_REQUIRED'};
  try {

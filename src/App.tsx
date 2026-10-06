@@ -3,9 +3,11 @@ import { CompactCloudStatus } from "./components/CompactCloudStatus";
 import { ExerciseLibrary } from "./components/ExerciseLibrary";
 import { HomeDashboard } from "./components/HomeDashboard";
 import { TodayWorkout } from "./components/TodayWorkout";
-import { initializeDatabase, seedFromStaticBundle } from "./db";
+import { bindAccountDatabase, db, initializeDatabase } from "./db";
 import { recordMetric } from "./performance";
-import { startCloudSync } from "./sync/cloudSync";
+import { CLOUD_STATE_EVENT, getCloudState, startCloudSync } from "./sync/cloudSync";
+import { supabase } from './sync/supabaseClient';
+import { CloudStatusCard } from './components/CloudStatusCard';
 import { isDemoMode } from './runtimeMode';
 import { prepareDemo } from './demo';
 
@@ -15,14 +17,19 @@ function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>(isDemoMode ? 'today' : 'home');
+  const [accountChanging, setAccountChanging] = useState(false);
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
+        if (!isDemoMode && supabase) {
+          const { data, error: authError } = await supabase.auth.getSession();
+          if (authError) throw authError;
+          if (data.session) await bindAccountDatabase(data.session.user.id, import.meta.env.VITE_SUPABASE_URL);
+        }
         await initializeDatabase();
         if (isDemoMode) await prepareDemo();
-        else await seedFromStaticBundle();
         if (active) setReady(true);
       } catch (reason) {
         console.error(reason);
@@ -34,7 +41,10 @@ function App() {
 
   useEffect(() => {
     if (!ready) return;
-    return startCloudSync();
+    const onAccountChange = () => setAccountChanging(getCloudState().accountChanging);
+    window.addEventListener(CLOUD_STATE_EVENT, onAccountChange);
+    const stop = startCloudSync();
+    return () => { window.removeEventListener(CLOUD_STATE_EVENT, onAccountChange); stop(); };
   }, [ready]);
 
   useLayoutEffect(() => {
@@ -50,6 +60,12 @@ function App() {
 
   if (!ready) {
     return <main className="splash"><div className="brand-mark">AI</div><h1>Open Workout AI</h1><p>ローカル履歴を準備しています…</p></main>;
+  }
+
+  if (!isDemoMode && (accountChanging || !db.accountId)) {
+    return <main className="splash"><h1>Open Workout AI</h1>{accountChanging
+      ? <p>アカウントを切り替えています…</p>
+      : <CloudStatusCard />}</main>;
   }
 
   return (

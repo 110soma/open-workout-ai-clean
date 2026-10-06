@@ -14,11 +14,14 @@ Demo data is stored in the separate `open-workout-ai-demo` IndexedDB database. U
 - **Export:** use the Supabase dashboard's table export for `prescriptions`, `workout_sessions`, and `workout_sets` before destructive maintenance.
 - **Delete workout data:** delete only rows owned by the authenticated user, starting with sets and then sessions/prescriptions according to foreign-key rules. A polished in-app flow is not implemented yet.
 - **Delete account:** the self-hosting administrator deletes the Authentication user in Supabase after exporting or deleting the user's records. Cascading foreign keys remove that user's connected records.
+- If optional official-save journal rows exist, the administrator must first review/export and remove that user's `workout_commit_requests` entries. Its user foreign key does not cascade, so account deletion otherwise stops. Never clear an active commit mutex without checking for an in-flight writer.
 - **Backup/restore:** use the backup/export tools available for the chosen Supabase plan and test restoration in a separate project before relying on it.
 
 These manual steps are acceptable for a self-hosted v0.1 release because the installer controls their own Supabase project. A user-facing export/delete/account-removal screen remains on the post-v0.1 roadmap.
 
 ## Backup and restore
+
+Connected browser data uses a separate database per Supabase project and user. Logout does not delete it; signing back into the same account restores its local records. The previous unowned `open-workout-ai` database is deliberately ignored, not deleted or assigned to a new account. Demo uses its own separate database. Clear the relevant site's data only when you intend to remove those local copies.
 
 1. Export `prescriptions`, `workout_sessions`, and `workout_sets` from your own Supabase project.
 2. Keep the files outside the repository and do not commit personal workout data.

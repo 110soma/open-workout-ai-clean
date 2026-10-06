@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { checkServerReadiness } from '../server/readiness.mjs';
+import { isSheetsOwnerAllowed } from '../server/sheets-access.mjs';
 export const config={maxDuration:60};
 export default async function handler(req,res) {
  res.setHeader('Cache-Control','private, no-store');
@@ -11,6 +12,7 @@ export default async function handler(req,res) {
   const client=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data,error}=await client.auth.getUser(auth.slice(7));
   if(error||!data.user) return res.status(401).end();
+  if(!isSheetsOwnerAllowed(data.user.id,process.env.WORKOUT_SHEETS_OWNER_USER_ID)) return res.status(403).json({status:'review_required',reason:'sheets_owner_not_allowed'});
   return res.status(200).json(await checkServerReadiness());
  } catch {return res.status(503).json({status:'SERVER_CONFIG_REVIEW_REQUIRED'});}
 }

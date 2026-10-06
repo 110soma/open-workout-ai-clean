@@ -1,40 +1,25 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
-
-const root = resolve(new URL('..', import.meta.url).pathname.replace(/^\/(?:[A-Za-z]:)/, (m) => m.slice(1)));
-const skipped = new Set(['node_modules', 'dist', '.git', 'test-results', 'playwright-report']);
-const forbiddenPaths = [/.phase4-private/i, /(^|[\\/])\.env\.local$/i, /(^|[\\/])\.vercel([\\/]|$)/i, /history-v1\.json$/i];
-const contentRules = [
-  ['private key', /-----BEGIN (?:RSA )?PRIVATE KEY-----/],
-  ['Supabase secret', /\bsb_secret_[A-Za-z0-9_-]+/],
-  ['JWT-like token', /\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}/],
-  ['Vercel token', /\b(?:vercel_|vcp_)[A-Za-z0-9_-]{16,}/i],
-  ['personal Windows path', /[A-Za-z]:\\Users\\(?!YOUR_NAME\\)[^\\\r\n]+\\/i],
-  ['email address', /\b[A-Z0-9._%+-]+@(?!example\.(?:com|org)\b)[A-Z0-9.-]+\.[A-Z]{2,}\b/i],
-  ['hard-coded Supabase project', /https:\/\/[a-z0-9]{12,}\.supabase\.co/i]
-];
-
+import { fileURLToPath } from 'node:url';
+import { contentFindings, forbiddenPath } from './audit-rules.mjs';
+const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const skipped = new Set(['node_modules', 'dist', 'dev-dist', '.git', 'test-results', 'playwright-report', 'coverage', '.npm-cache']);
 async function walk(dir) {
   const out = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (entry.isDirectory() && skipped.has(entry.name)) continue;
     const full = resolve(dir, entry.name);
-    if (entry.isDirectory()) out.push(...await walk(full));
-    else out.push(full);
+    if (entry.isSymbolicLink()) throw new Error('audit_symlink_requires_review');
+    if (entry.isDirectory()) out.push(...await walk(full)); else out.push(full);
   }
   return out;
 }
-
 const findings = [];
-for (const file of await walk(root)) {
-  const rel = relative(root, file);
-  if (forbiddenPaths.some((rule) => rule.test(rel))) findings.push(`${rel}: forbidden path`);
-  if (/\.(png|jpg|jpeg|gif|ico|zip|lock)$/i.test(file) || /package-lock\.json$/i.test(file)) continue;
-  const text = await readFile(file, 'utf8');
-  for (const [name, rule] of contentRules) if (rule.test(text)) findings.push(`${rel}: ${name}`);
+const files = await walk(root);
+for (const file of files) {
+  const path = relative(root, file).replaceAll('\\', '/');
+  if (forbiddenPath(path)) findings.push({ path, category: 'forbidden path' });
+  for (const category of contentFindings(await readFile(file), path)) findings.push({ path, category });
 }
-if (findings.length) {
-  console.error(JSON.stringify({ status: 'PUBLIC_AUDIT_FAILED', findings }, null, 2));
-  process.exit(1);
-}
-console.log(JSON.stringify({ status: 'PUBLIC_AUDIT_OK', scanned_files: (await walk(root)).length, secrets_printed: 0 }));
+console.log(JSON.stringify({ status: findings.length ? 'PUBLIC_AUDIT_FAILED' : 'PUBLIC_AUDIT_OK', scanned_files: files.length, findings, secrets_printed: 0 }));
+if (findings.length) process.exitCode = 1;

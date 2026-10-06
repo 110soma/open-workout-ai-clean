@@ -3,6 +3,7 @@ import { autoFinalize } from '../server/auto-finalize.mjs';
 import { CommitJournal,snapshotHash } from '../server/commit-journal.mjs';
 import { GoogleSheets } from '../server/google-sheets.mjs';
 import { SheetsGateway } from '../server/sheets-gateway.mjs';
+import { isSheetsOwnerAllowed } from '../server/sheets-access.mjs';
 export const config={maxDuration:60};
 
 export default async function handler(req, res) {
@@ -16,6 +17,10 @@ export default async function handler(req, res) {
   const client = createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:authorization}}});
   const {data,error} = await client.auth.getUser(token);
   if (error || !data.user) return res.status(401).json({status:'review_required'});
+  if (process.env.WORKOUT_AUTO_FINALIZE_ENABLED === 'true'
+      && !isSheetsOwnerAllowed(data.user.id, process.env.WORKOUT_SHEETS_OWNER_USER_ID)) {
+    return res.status(403).json({status:'review_required',reason:'sheets_owner_not_allowed'});
+  }
   const sessionId = req.body?.session_id;
   if (typeof sessionId !== 'string' || !/^[A-Za-z0-9_-]{8,120}$/.test(sessionId)) return res.status(400).json({status:'review_required'});
   let expectedHash;

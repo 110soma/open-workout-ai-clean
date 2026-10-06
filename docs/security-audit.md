@@ -1,5 +1,7 @@
 # Public safety audit
 
+> See [Final independent audit](final-public-audit.md) and its [resolution](blocker-resolution.md). Earlier scanner success did not establish publication readiness; personal metadata and a private-origin identifier were missed.
+
 ## Private source risks found
 
 - A real Spreadsheet ID was hard-coded in the optional server adapter.

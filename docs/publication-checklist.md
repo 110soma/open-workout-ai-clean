@@ -15,5 +15,12 @@
 - [x] Data export, account/data deletion, and backup/restore guidance completed
 - [x] Final manual review of the synthetic screenshot and tracked-file audit
 - [x] New repository creation explicitly approved
+- [x] Personal commit metadata and private-origin identifier removed from reachable publishable history
+- [x] Unverified exercise PNGs excluded from every publishable commit
+- [x] Account/project local storage isolation, safe auth transitions and wrong-owner upload protection tested
+- [x] Connected empty startup and example-plan import tested without private snapshots
+- [x] Experimental Sheets gateway restricted to exactly one configured owner
+- [ ] Review provider-retained old commit objects before changing visibility
+- [ ] Independent re-audit of blocker fixes
 - [ ] Public visibility explicitly approved
 - [ ] v0.1.0 Release explicitly approved

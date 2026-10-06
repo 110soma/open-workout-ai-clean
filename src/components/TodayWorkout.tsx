@@ -15,7 +15,7 @@ const targetReps = (set: LiveWorkoutSet): string =>
   set.target_reps_min === set.target_reps_max
     ? `${set.target_reps_min ?? "—"}`
     : `${set.target_reps_min ?? "—"}–${set.target_reps_max ?? "—"}`;
-const exerciseArt = (name: string): string => name.includes("プレス") ? "/images/exercise/bench-press.png" : "/images/exercise/dumbbell-row.png";
+const exerciseArt = (_name: string): string => "/images/exercise/placeholder.svg";
 const sideLabel = (side: LiveWorkoutSet["side"]): string => side === "R" ? "右" : side === "L" ? "左" : "";
 const equipmentLabels: Record<string, string> = {
   plate_loaded: "プレートロード",
@@ -287,7 +287,7 @@ export function TodayWorkout({ onOpenHistory }: TodayWorkoutProps) {
       setError('種目・重量・回数・休憩を確認してください。'); return;
     }
     const bundle = await loadPrescriptionBundle();
-    const source = bundle.exercises.find(e => e.exercise_id === master.exercise_id);
+    const source = bundle?.exercises.find(e => e.exercise_id === master.exercise_id);
     const exercise: LiveWorkoutExercise = {
       workout_exercise_id: `exercise-${crypto.randomUUID()}`, exercise_id: master.exercise_id,
       exercise_name: master.exercise_name, equipment: master.equipment,
@@ -314,7 +314,7 @@ export function TodayWorkout({ onOpenHistory }: TodayWorkoutProps) {
         <h2>今日のメニュー</h2>
         {prescriptionDate(workout) && <p className="prescription-source">元の処方日 {prescriptionDate(workout)}（最新の実データ）</p>}
         <section className="body-summary">
-          <div className="body-summary-art"><img src="/images/exercise/workout-target.png" alt="" /></div>
+          <div className="body-summary-art"><img src="/images/exercise/placeholder.svg" alt="" /></div>
           <div><small>今日鍛える部位</small><strong>{workout.bodypart}</strong><span>{workout.exercises.length}種目・{logicalSetCount(allSets(workout))}セット</span></div>
         </section>
         <div className="planned-menu-list">

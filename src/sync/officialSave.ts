@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { assertAccountOwner, db } from '../db';
 import { supabase } from './supabaseClient';
 
 export async function requestOfficialSave(workoutId: string): Promise<void> {
@@ -9,6 +9,7 @@ export async function requestOfficialSave(workoutId: string): Promise<void> {
   try {
     const {data} = await supabase.auth.getSession();
     if (!data.session) throw new Error('not_authenticated');
+    assertAccountOwner(db, data.session.user.id);
     const response = await fetch('/api/workout-finalize', {method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${data.session.access_token}`},body:JSON.stringify({session_id:workoutId}),signal:AbortSignal.timeout(65000)});
     const result = await response.json();
     if (response.ok && result.session_id === workoutId && result.status === 'official_saved' && result.commit_match_status === 'match') status = 'saved';

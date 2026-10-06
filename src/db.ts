@@ -1,7 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
 import type { Exercise, ImportBundle, LiveWorkout, PrescriptionCacheRecord, WorkoutSession, WorkoutSet } from "./types";
 import { measureAsync, recordMetric } from "./performance";
-import { BUNDLED_DATA_REVISION } from "./generated/dataRevision";
 import { isDemoMode } from './runtimeMode';
 
 export interface MetaRecord {
@@ -17,7 +16,7 @@ export class WorkoutDatabase extends Dexie {
   liveWorkouts!: EntityTable<LiveWorkout, "workout_id">;
   prescriptions!: EntityTable<PrescriptionCacheRecord, "prescription_id">;
 
-  constructor(name = "open-workout-ai") {
+  constructor(name = "open-workout-ai", readonly accountId: string | null = null) {
     super(name);
     this.version(1).stores({
       sessions: "&session_id,date,[date+session_id]",
@@ -43,7 +42,42 @@ export class WorkoutDatabase extends Dexie {
   }
 }
 
-export const db = new WorkoutDatabase(isDemoMode ? 'open-workout-ai-demo' : 'open-workout-ai');
+// Connected storage is selected once, before mounting data-bearing screens.
+// The old unowned database is deliberately never imported into an account.
+export let db = new WorkoutDatabase(isDemoMode ? 'open-workout-ai-demo' : 'open-workout-ai-signed-out');
+
+export async function openAccountDatabase(accountId: string, projectUrl: string): Promise<WorkoutDatabase> {
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(accountId)) throw new Error('invalid_account_id');
+  const project = new URL(projectUrl).origin;
+  const database = new WorkoutDatabase(`open-workout-ai:${encodeURIComponent(project)}:${accountId}`, accountId);
+  await database.open();
+  try {
+    await database.transaction('rw', database.meta, async () => {
+      const owner = await database.meta.get('authUserId');
+      const storedProject = await database.meta.get('authProject');
+      if ((owner && owner.value !== accountId) || (storedProject && storedProject.value !== project)) {
+        throw new Error('local_account_owner_mismatch');
+      }
+      await database.meta.put({ key: 'authUserId', value: accountId });
+      await database.meta.put({ key: 'authProject', value: project });
+    });
+    return database;
+  } catch (error) {
+    database.close();
+    throw error;
+  }
+}
+
+export async function bindAccountDatabase(accountId: string, projectUrl: string): Promise<void> {
+  if (isDemoMode) throw new Error('demo_account_binding_forbidden');
+  const selected = await openAccountDatabase(accountId, projectUrl);
+  db.close();
+  db = selected;
+}
+
+export function assertAccountOwner(database: WorkoutDatabase, accountId: string): void {
+  if (!database.accountId || database.accountId !== accountId) throw new Error('local_account_owner_mismatch');
+}
 
 export async function initializeDatabase(database: WorkoutDatabase = db): Promise<void> {
   await measureAsync("db:initialize", async () => {
@@ -76,19 +110,4 @@ export async function importBundle(
     });
   });
   return true;
-}
-
-export async function seedFromStaticBundle(
-  database: WorkoutDatabase = db,
-  expectedRevision = BUNDLED_DATA_REVISION
-): Promise<boolean> {
-  const localRevision = await database.meta.get("dataRevision");
-  if (localRevision?.value === expectedRevision) {
-    recordMetric("db:seed:local-only", 0);
-    return false;
-  }
-  const response = await fetch("/data/history-v1.json", { cache: "no-cache" });
-  if (!response.ok) throw new Error(`履歴データを読み込めませんでした (${response.status})`);
-  const bundle = (await response.json()) as ImportBundle;
-  return importBundle(bundle, database);
 }

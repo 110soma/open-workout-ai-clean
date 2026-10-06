@@ -4,6 +4,8 @@
 
 The release candidate is stored in a Private GitHub Repository. Demo install, Workout execution, local recovery, build, PWA generation, mobile/desktop E2E, dependency audit, tracked-file audit, Git-history audit, and hosted GitHub Actions pass.
 
+See [Blocker resolution](blocker-resolution.md) for the subsequent security fixes, verification scope and remaining publication checks. A passing scanner alone is not an independent security approval.
+
 ## External actions intentionally not performed
 
 - Public push or visibility change
@@ -14,8 +16,9 @@ The release candidate is stored in a Private GitHub Repository. Demo install, Wo
 ## Required before public release
 
 1. Repeat public and history audits immediately before changing visibility.
-2. Maintainer approves Public visibility.
-3. Maintainer separately approves the v0.1.0 Release.
+2. Independently re-audit the blocker fixes and review any old objects retained by the hosting provider.
+3. Maintainer approves Public visibility.
+4. Maintainer separately approves the v0.1.0 Release.
 
 ## Non-blocking limitations
 

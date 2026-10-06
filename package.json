@@ -11,10 +11,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:large": "vitest run tests/large-data.test.ts --reporter=verbose",
-    "test:e2e": "playwright test tests/e2e/demo.spec.ts",
+    "test:e2e": "playwright test",
     "audit:public": "node scripts/oss-audit.mjs",
     "audit:history": "node scripts/git-history-audit.mjs",
-    "verify": "npm test && npm run build && npm run test:e2e && npm run audit:public"
+    "verify": "npm test && npm run build && npm run test:e2e && npm run audit:public && npm run audit:history"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

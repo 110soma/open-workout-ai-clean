@@ -16,9 +16,9 @@ Prescription source
 ## Safety boundaries
 
 - **Browser:** publishable Supabase settings only.
-- **IndexedDB:** immediate local save and session recovery.
+- **IndexedDB:** immediate local save and session recovery in a database named for the Supabase project and authenticated user. Account changes hide the current screens and reload before binding another database; old unowned data is never auto-imported.
 - **Supabase:** authenticated per-user cloud records protected by RLS (row-level security: each user can access only their rows).
-- **Optional server gateway:** secret credentials and Google Sheets writes. This code must never run in the browser.
+- **Optional server gateway:** secret credentials and Google Sheets writes, allowed only for the one configured authenticated owner. Missing or mismatched owner configuration stops before cloud/Sheets processing. This code must never run in the browser.
 - **Demo:** separate database name, synthetic content, no cloud client, no official-save request.
 
 ## Stable identity
@@ -28,4 +28,3 @@ Prescription source
 ## Local-first
 
 Local-first means user input is saved on the device before waiting for a network response. Cloud failure must not erase the local completed workout.
-
