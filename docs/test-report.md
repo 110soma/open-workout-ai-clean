@@ -18,6 +18,7 @@
 - Fresh local clone: dependency install, Demo dev server, Unit, Build, E2E, public audit, and Git-history audit passed
 - Demo development server: HTTP 200
 - PWA output: manifest and generated Service Worker confirmed
-- Git history audit: 2 local commits passed with no secret values printed
+- Git history audit: the complete current OSS history passed with no secret values printed
+- Hosted GitHub Actions: passed on the Private Repository; 54 Unit tests, build, mobile/desktop E2E, and public audit completed
 
 The clean setup used a new local clone with no `.env.local` and no reused `node_modules`. This is a strong first-install simulation, but not a separate physical computer test. The generated JavaScript bundle is about 604 kB before gzip and triggers a size warning. This is a performance improvement item, not a functional failure.

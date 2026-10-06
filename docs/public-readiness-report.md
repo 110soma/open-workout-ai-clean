@@ -2,23 +2,20 @@
 
 ## Technical status
 
-The local release candidate is ready for repository creation. Demo install, Workout execution, local recovery, build, PWA generation, mobile/desktop E2E, dependency audit, tracked-file audit, and Git-history audit pass.
+The release candidate is stored in a Private GitHub Repository. Demo install, Workout execution, local recovery, build, PWA generation, mobile/desktop E2E, dependency audit, tracked-file audit, Git-history audit, and hosted GitHub Actions pass.
 
 ## External actions intentionally not performed
 
-- GitHub repository creation
 - Public push or visibility change
-- Hosted GitHub Actions run
 - Public v0.1.0 Release
 - Production deployment
 - New external Supabase project
 
 ## Required before public release
 
-1. Maintainer approves GitHub repository creation.
-2. Push first to a controlled repository and confirm GitHub Actions.
-3. Repeat public and history audits.
-4. Maintainer approves public visibility and v0.1.0 Release.
+1. Repeat public and history audits immediately before changing visibility.
+2. Maintainer approves Public visibility.
+3. Maintainer separately approves the v0.1.0 Release.
 
 ## Non-blocking limitations
 

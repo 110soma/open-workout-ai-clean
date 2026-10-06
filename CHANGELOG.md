@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Confirmed the private GitHub repository and hosted CI before any public release.
+
 ## [0.1.0-rc.1] - 2026-10-06
 
 - Prepared a private v0.1.0 candidate from the validated local-first workout PWA.
