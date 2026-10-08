@@ -1,58 +1,112 @@
-# Setup
+# Windowsではじめる Open Workout AI v0.1.0
 
-## 1. Demo only
+上から進めると架空のトレーニングを試せます。Gitやプログラミングの知識は不要です。**最初はDemoだけを試してください。**
 
-1. Install Node.js 22 or newer.
-2. Download or clone this repository into a new folder.
-3. Open a terminal in that folder.
-4. Run `npm ci`.
-5. Run `npm run dev`.
-6. Open the local address shown by Vite.
+このページのPhase A → [Phase B〜D：自分のクラウドを作る](supabase-setup-ja.md) → [困ったとき](troubleshooting.md)。
 
-No account or Secret is required. With no Supabase configuration, Demo mode is automatic.
+Demo（操作見本）は端末内だけに保存します。Supabase（自分用のクラウド保管庫）への接続は後から行います。**既存のPrivate版や日常利用中のデータベースには一切操作しないでください。**
 
-## 2. Your own Supabase
+必要なもの：Windows PC、ネット接続、EdgeまたはChrome、空き容量のある作業フォルダ。PC内のURLは同じPC用です。スマートフォンへの公開・インストールはこの基本手順に含みません。
 
-1. Create a Supabase project.
-2. Enable email/password Authentication and create your own user.
-3. In SQL Editor, run `supabase/migrations/0001...` through `0005...` in numeric order.
-4. Copy `.env.example` to `.env.local`.
-5. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_DEMO_MODE=false`.
-6. Start the app and sign in.
+<a id="phase-a"></a>
+## Phase A：アカウントなしでDemoを試す
 
-In a new installation, the app shows an empty menu until a prescription is imported. It does not fetch any private history or plan file. For the first example, follow the next steps.
+### A1. ファイルを入手する
 
-### Example prescription
+- **目的：** 公開済みv0.1.0をPCへ保存します。
+- **操作場所：** [GitHubのファイル置き場](https://github.com/110soma/open-workout-ai-clean) → [v0.1.0のRelease（公開版）](https://github.com/110soma/open-workout-ai-clean/releases/tag/v0.1.0)。
+- **入力・操作：** **Assets → Source code (zip)** をクリック。[ZIP直接リンク](https://github.com/110soma/open-workout-ai-clean/archive/refs/tags/v0.1.0.zip)でも同じ版です。緑のCodeボタンのZIPは最新版なので今回は使いません。
+- **正常：** ダウンロードフォルダにZIPができます。
+- **失敗：** ネット接続を確認しReleaseを開き直します。GitHubへのログインは不要です。
 
-This imports a **fictional plan**, not workout actuals, into **your own** Supabase project. No Google Sheets or server secret is needed.
+### A2. ZIPを展開する
 
-1. In Supabase Authentication → Users, copy your user's UUID (the account identifier).
-2. Choose today's date in `YYYY-MM-DD` format.
-3. From the repository folder, run this command, replacing both placeholders:
+- **目的：** ZIPを実行できる普通のフォルダにします。
+- **操作場所：** エクスプローラーの「ダウンロード」。ZIPを右クリック → **すべて展開**。
+- **入力・操作：** 「参照」でドキュメント内など自分で分かる場所を選び「展開」。中の `open-workout-ai-clean-0.1.0` フォルダを開きます。ZIPの中から直接実行しません。
+- **正常：** 同じ階層に `package.json`、`package-lock.json`、`src`、`scripts`、`supabase` が見えます。この階層を「アプリフォルダ」と呼びます。`.env.example` もあります。拡張子は「表示 → 表示 → ファイル名拡張子」で表示できます（Windows 10は「表示 → ファイル名拡張子」）。
+- **失敗：** `package.json` がなければ、もう一段内側を開きます。[フォルダ違い](troubleshooting.md#folder)。
 
-   ```bash
-   node scripts/example-prescription-sql.mjs --user-id YOUR_AUTH_USER_UUID --date YYYY-MM-DD
-   ```
+### A3. Node.jsを入れる
 
-4. Copy only the generated SQL text into **your own project's SQL Editor** and run it. SQL is a set of database instructions; this one adds or updates one example plan and does not create workout records. Keep your generated output outside Git.
-5. In `.env.local`, use `VITE_DEMO_MODE=false`. Leave `VITE_WORKOUT_RECORD_MODE=test` and `VITE_AUTO_FINALIZE=false` while trying the example.
-6. Open the app, sign in, and wait for today's menu. Open it and press the start button.
+- **目的：** アプリを動かすソフトを入れます。Node.jsは実行用ソフト、付属のnpmは必要な部品を入れる道具です。
+- **操作場所：** [Node.js公式ダウンロード](https://nodejs.org/en/download)。
+- **入力・操作：** **LTS（長期サポート版）で22以上**、Windows、Windows Installer（`.msi`）を選びます。通常はx64。ARMのPCはWindows「設定 → システム → バージョン情報 → システムの種類」で確認します。インストーラーを開き、利用条件を確認しNext → Install → Finish。追加開発ツールの自動インストールは不要です。
+- **正常：** インストール完了画面が出ます。既に入っていても次のバージョン確認を行います。
+- **失敗：** インストール禁止のPCは管理者へ相談します。非公式サイトからは入れません。
 
-Running the generator again for the same user/date updates the same example ID rather than adding another plan. For real plans, the stored `payload` uses the format in `examples/prescription.example.json`; its target ID/date must agree with the row's ID/date. Importing plans is an administrator operation, never a browser INSERT.
+### A4. 正しい場所でPowerShellを開く
 
-The migration/import flow is tested against an isolated PostgreSQL-compatible engine and the app is browser-tested against a local mock Supabase API. A brand-new external Supabase project remains **not field-tested**.
+- **目的：** アプリに操作指示を送る窓を開きます。PowerShellはWindows付属のコマンド入力画面です。
+- **操作場所：** A2のアプリフォルダをエクスプローラーで開き、上部のアドレス欄をクリック。
+- **入力：** アドレス欄へ `powershell` → Enter。開いたPowerShellへ次を1行ずつ貼り、毎回Enter。`PS ...>` は入力しません。
 
-The publishable key is intended for browser use together with RLS. Do not use the service-role/secret key in the PWA.
+```powershell
+Get-Location
+Test-Path .\package.json
+node --version
+npm.cmd --version
+```
 
-`migration` means a numbered SQL file that reproduces the database design. Run `0001` through `0005` once, in order. These files and steps have been reviewed locally, but setup in a brand-new third-party Supabase project is **not yet field-tested**.
+- **正常：** 場所はアプリフォルダ、次は `True`、Nodeは `v22...` 以上、npmも数字が出ます。PowerShell自体は5でも構いません。
+- **失敗：** `C:\WINDOWS\System32` や `False` なら[場所を直す](troubleshooting.md#folder)。Nodeが見つからなければインストール後にPowerShellを開き直します。**`npm.cmd`** を使うので実行ポリシー変更は不要です。
 
-Google Sheets is not required. The optional Sheets gateway needs separate server-only credentials; do not add them to `.env.local` or any `VITE_*` variable.
+### A5. 部品を入れる
 
-## 3. Checks
+- **目的：** 公開版が指定した部品をまとめて入れます。
+- **操作場所：** A4のアプリフォルダのPowerShell。
+- **入力：**
 
-- `npm test`: behavior tests
-- `npm run build`: TypeScript and production PWA build
-- `npm run test:e2e`: synthetic Demo in mobile and desktop browsers
-- The same command also checks mock Supabase clean-start, account switching and active-session restoration. Install Chromium once with `npx playwright install chromium` (Windows: `npx.cmd playwright install chromium`).
-- `npm run audit:public`: blocks common secrets and private artifacts
-- `npm run audit:history`: checks the new local Git history for secrets and private artifacts
+```powershell
+npm.cmd ci
+```
+
+- **正常：** 数分後に `added ... packages` 等が出て、`PS ...>` に戻ります。`node_modules` フォルダができます。
+- **失敗：** [インストール失敗](troubleshooting.md#install)。`package-lock.json` を削除しないでください。
+
+### A6. 起動する
+
+- **目的：** PC内でアプリを動かします。
+- **操作場所：** 同じアプリフォルダのPowerShell。
+- **入力：**
+
+```powershell
+npm.cmd run dev
+```
+
+- **正常：** `Local: http://127.0.0.1:4174/` のような表示。**実際に出たLocalのURL**をEdge/Chromeのアドレス欄へ貼ります。4174が使用中なら数字が変わります。PowerShellは閉じずにおきます。
+- **失敗：** [URLを開けない](troubleshooting.md#server)。別のPCからは開けません。
+
+### A7. 入力・復元・終了を試す
+
+- **目的：** 本物の実績を作らず操作を確認します。
+- **操作場所：** ブラウザのアプリ。**「デモ・送信なし」** と架空データの案内を確認。
+- **入力・操作：** Demoは操作途中の見本が開きます。開始ボタンを探す必要はありません。休憩画面なら「次のセットへ」、下部「今日のトレーニング」を開きます。「実際の重量」「実際の回数」をクリックして数字を入力、または＋/－。「セット完了」でRIRを選びます。RIRは「あと何回できそうか」の自己評価。分からなければ **「未入力」**。次のセットへ進みます。
+- **正常：** 完了セットに値が出ます。F5で再読み込みし入力が残ることを確認。「トレーニング終了」→ **「デモを終了（送信なし）」** → **「デモ完了・外部送信なし」**。再読み込みして終了状態も残れば成功。「デモをやり直す」はDemoの端末記録をリセットするボタンです。
+- **失敗：** [モードの確認](troubleshooting.md#mode)。実施していないセットを完了にする必要はありません。架空の値だけを使います。
+
+### A8. 停止・再開する
+
+- **目的：** PC内のアプリを停止します。
+- **操作場所：** 起動中のPowerShell。
+- **入力・操作：** **Ctrl+C**。確認が出たときだけ `Y` → Enter。
+- **正常：** `PS ...>` に戻ります。次回はA4 → `npm.cmd run dev` → 同じURL。毎回の `npm.cmd ci` は不要。記録は同じブラウザ・同じURLに残ります。
+- **失敗：** 停止後にURLが開けないのは正常です。再起動します。URLのポートやブラウザを変えると保存場所も変わります。ブラウザデータの削除で端末記録は消えます。
+
+## 次に進む
+
+Demoだけなら完了。[Phase B〜Dへ](supabase-setup-ja.md)。[データ保管・バックアップ](data-management.md)の既存説明は英語です。日本語の基本説明は次のガイド末尾にもあります。
+
+## 開発者向け確認（通常の導入には不要）
+
+アプリフォルダのPowerShellでCtrl+Cでサーバーを止めてから実行。
+
+```powershell
+npm.cmd test
+npm.cmd run build
+npx.cmd playwright install chromium
+npm.cmd run test:e2e
+npm.cmd run audit:public
+```
+
+テスト成功、`dist/sw.js` と `dist/manifest.webmanifest` の生成が正常です。`audit:history` と `verify` はGit履歴も調べるためZIPではなくGitで取得した開発者向けです。

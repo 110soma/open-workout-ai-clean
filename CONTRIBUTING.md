@@ -7,4 +7,4 @@
 5. Keep local-first safety: user input must be stored locally before network work begins.
 6. Use GitHub's private noreply commit email (GitHub Settings → Emails) rather than a personal email. The history audit checks author/committer metadata as well as files.
 
-The repository is currently a Private candidate. CI is active; Public visibility and releases require separate maintainer approval.
+The repository is public and v0.1.0 is released. CI is active. Submit changes through a pull request; release and deployment decisions remain with the maintainer.
