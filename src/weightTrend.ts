@@ -7,7 +7,9 @@ export function weightSide(side: string | null, unilateral: boolean | null): Wei
   if (side === 'L' || side === '左') return 'left';
   if (side === 'R' || side === '右') return 'right';
   if (side === '両' || side === 'both') return 'both';
-  return unilateral ? 'unknown' : 'both';
+  // Only an explicitly bilateral master can resolve a missing side.
+  // Unknown master metadata (null) must not be treated as false.
+  return side === null && unilateral === false ? 'both' : 'unknown';
 }
 export function validWeight(value: number | null): value is number {
   return value !== null && Number.isFinite(value) && value >= 0;

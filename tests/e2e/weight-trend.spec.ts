@@ -1,4 +1,24 @@
 import { expect, test } from '@playwright/test';
+test('missing side and unknown master display as unknown, not simultaneous', async ({page}) => {
+  await page.goto('/?demo=1');
+  await page.getByRole('button',{name:'次のセットへ',exact:true}).click();
+  await page.evaluate(async()=>{
+    const db=await new Promise<IDBDatabase>((resolve,reject)=>{const r=indexedDB.open('open-workout-ai-demo');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+    await new Promise<void>((resolve,reject)=>{
+      const t=db.transaction(['exercises','sets'],'readwrite');
+      const exercise=t.objectStore('exercises').get('BENCH_PRESS');
+      exercise.onsuccess=()=>t.objectStore('exercises').put({...exercise.result,unilateral:null});
+      const d=new Date();const date=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      t.objectStore('sets').put({set_id:'unknown-side-fixture',session_id:'unknown-side-session',session_date:date,exercise_id:'BENCH_PRESS',set_no:1,side:null,set_type:'working',load_kg:40,reps:10,RIR:null,estimated_1RM:null,completed:true});
+      t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);
+    });db.close();
+  });
+  await page.locator('.bottom-nav button').filter({hasText:'種目'}).click();
+  await page.getByRole('button',{name:/ベンチプレス/}).click();
+  await expect(page.locator('.weight-legend')).toHaveText('左右未記載');
+  await expect(page.locator('.weight-day-detail')).toContainText('左右未記載');
+  await expect(page.locator('.weight-day-detail')).not.toContainText('左右同時');
+});
 test('weight trend uses real dates, separates sides and preserves source records', async ({ page, baseURL }) => {
   const storedSets = () => page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => { const request=indexedDB.open('open-workout-ai-demo'); request.onsuccess=()=>resolve(request.result); request.onerror=()=>reject(request.error); });

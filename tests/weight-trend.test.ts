@@ -16,6 +16,20 @@ test('left and right stay separate; unknown side is never assigned or summed', (
   expect(weightDays(rows, true, 'six', '2025-05-29')[0].weights).toEqual({ left: 12, right: 10, unknown: 9 });
   expect(weightSide('R', false)).toBe('right');
 });
+test('unknown master metadata never implies bilateral execution', () => {
+  expect(weightSide(null, null)).toBe('unknown');
+  expect(weightSide(null, true)).toBe('unknown');
+  expect(weightSide(null, false)).toBe('both');
+  expect(weightSide('両', null)).toBe('both');
+  expect(weightSide('L', null)).toBe('left');
+  expect(weightSide('R', null)).toBe('right');
+  expect(weightSide('unrecognized', false)).toBe('unknown');
+  const rows = [set('missing','2025-05-01',40), set('explicit','2025-05-01',45,{side:'両'})];
+  const before = JSON.stringify(rows);
+  expect(weightDays(rows,null,'six','2025-05-29')[0].weights).toEqual({ unknown:40,both:45 });
+  expect(weightDays(rows,false,'six','2025-05-29')[0].weights).toEqual({ both:45 });
+  expect(JSON.stringify(rows)).toBe(before);
+});
 test('missing weights are not zero; real zero is preserved', () => {
   const days = weightDays([set('a', '2025-05-01', null), set('b', '2025-05-02', 0)], false, 'six', '2025-05-29');
   expect(days[0].weights).toEqual({}); expect(days[0].sets[0].load_kg).toBeNull(); expect(days[1].weights.both).toBe(0);
