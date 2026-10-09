@@ -1,16 +1,24 @@
 # Open Workout AI
 
+**初めての方へ： [Windows向け日本語導入ガイド](docs/setup.md)**
+
+- まず試す → [Demoを起動](docs/setup.md#phase-a)
+- 自分のクラウドへ保存 → [Supabase作成・接続・保存確認](docs/supabase-setup-ja.md)
+- 困ったとき → [エラー別の解決方法](docs/troubleshooting.md)
+
+メニューを読み込み、重量・回数を記録し、途中の状態を復元するアプリです。Demoは架空データを端末だけに保存します。自分のSupabaseを設定するとクラウド保存もできます。Google Sheetsは基本導入に不要です。
+
 Open Workout AI is a local-first PWA that safely turns a workout prescription into an executable session, preserves progress offline, syncs completed records, and validates results before they become official history.
 
 It is not only a workout tracker. It supports the loop:
 
 **Plan → Execute → Record → Validate → Learn → Next Plan**
 
-> Status: v0.1.0 release candidate. It has not been published or released yet.
+> Status: [v0.1.0 is publicly released](https://github.com/110soma/open-workout-ai-clean/releases/tag/v0.1.0).
 
-> The independent clean repository passed the final pre-publication audit (`PUBLIC_GO`). The old pre-cleanup history is not available from this repository. See the [blocker-resolution report](docs/blocker-resolution.md) and [clean repository migration](docs/clean-repository-migration.md). The repository remains Private; Public visibility and the v0.1.0 release require separate maintainer approval.
+> This public repository is independent of the maintainer's private daily-use environment. Examples are synthetic. Historical audit documents describe pre-release work, not the current publication status.
 
-`"private": true` in `package.json` intentionally prevents accidental npm publication. It does not prevent a future public GitHub repository.
+`"private": true` in `package.json` prevents accidental npm package publication. This GitHub repository is public.
 
 ## Why this is different
 
@@ -63,11 +71,13 @@ Demo mode has been verified in mobile (390×844) and desktop (1440×900) browser
 3. Copy `.env.example` to `.env.local`.
 4. Set only your Supabase Project URL and publishable key in the `VITE_*` variables.
 5. Set `VITE_DEMO_MODE=false`.
-6. Follow the [example-prescription import steps](docs/setup.md#example-prescription) and sign in. A new account starts empty; no private snapshots are required.
+6. Follow the [Japanese example-prescription import steps](docs/supabase-setup-ja.md#phase-d) and sign in. A new account starts empty; no private snapshots are required.
 
 Never place a service-role key or secret key in a `VITE_*` variable. `VITE_*` values are visible in the browser.
 
 See [Setup](docs/setup.md) and [Architecture](docs/architecture.md).
+
+The maintainer reports a successful assisted installation on a new real Supabase project, including login and workout cloud storage. This is **not** an independent beginner test of these instructions. The real Dashboard steps still need that manual acceptance test.
 
 ## Example data
 
