@@ -419,7 +419,7 @@ button:focus-visible, summary:focus-visible { outline: 3px solid rgba(255,106,0,
 .rest-arc-track { stroke: #ba825a; stroke-opacity: .18; stroke-width: 2; }
 .rest-arc-progress { stroke: #ffbc79; stroke-linecap: round; }
 .rest-light-point { fill: #ffe4c7; filter: drop-shadow(0 0 6px #ff9b3b); }
-.rest-time { display: flex; align-items: baseline; gap: 0; color: #fff; font-family: Arial, system-ui, sans-serif; font-size: 76px; font-style: italic; font-weight: 900; letter-spacing: -.055em; font-variant-numeric: tabular-nums; padding-right: 8px; text-shadow: none; }
+.rest-time { display: flex; align-items: baseline; gap: 0; color: #fff; font-family: Arial, system-ui, sans-serif; font-size: 76px; font-style: italic; font-synthesis: style; font-weight: 900; letter-spacing: -.055em; font-variant-numeric: tabular-nums; padding-right: 8px; text-shadow: none; }
 .rest-time em { color: #ffd2a8; font-style: inherit; font-weight: inherit; }
 .rest-adjust { width: auto; gap: 14px; }
 .rest-adjust button { min-width: 78px; min-height: 44px; border: 1px solid #8e633f; border-radius: 24px; background: #30251e80; color: #e9d9cb; padding: 9px 16px; font-size: 12px; }

@@ -6,6 +6,8 @@ test('approved rest arc preserves controls and stops flashing after completion',
   await expect(timer).toBeVisible();
   await expect(timer.locator('.rest-arc-track')).toHaveAttribute('stroke-dasharray', '75 25');
   const clock = timer.locator('.rest-time');
+  expect(await clock.evaluate(element => getComputedStyle(element).fontStyle)).toBe('italic');
+  expect(await clock.evaluate(element => getComputedStyle(element).fontSynthesis)).not.toBe('none');
   const before = await clock.textContent();
   await timer.getByRole('button', { name: '＋15秒', exact: true }).click();
   await expect(clock).not.toHaveText(before!);
