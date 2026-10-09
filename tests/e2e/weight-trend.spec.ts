@@ -1,0 +1,54 @@
+import { expect, test } from '@playwright/test';
+test('weight trend uses real dates, separates sides and preserves source records', async ({ page, baseURL }) => {
+  const storedSets = () => page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => { const request=indexedDB.open('open-workout-ai-demo'); request.onsuccess=()=>resolve(request.result); request.onerror=()=>reject(request.error); });
+    const rows = await new Promise<unknown[]>((resolve,reject)=>{const request=db.transaction('sets','readonly').objectStore('sets').getAll();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    db.close(); return rows;
+  });
+  const errors: string[] = [], outgoing: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => { if (new URL(request.url()).origin !== new URL(baseURL!).origin) outgoing.push(request.url()); });
+  await page.goto('/?demo=1');
+  await page.getByLabel('休憩タイマー').waitFor();
+  await page.getByRole('button', { name: '次のセットへ', exact: true }).click();
+  const dates = await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => { const request = indexedDB.open('open-workout-ai-demo'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const dates = [-300,-180,-100,-60,-30,-10,-4,0].map(offset => {
+      const date = new Date(); date.setDate(date.getDate() + offset);
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    });
+    await new Promise<void>((resolve,reject) => {
+      const transaction = db.transaction('sets','readwrite');
+      dates.forEach((date,i) => ['L','R'].forEach((side,j) => transaction.objectStore('sets').put({set_id:`weight-fixture-${i}-${side}`,session_id:`weight-fixture-session-${i}`,session_date:date,exercise_id:'ONE_ARM_DB_ROW',set_no:1,side,set_type:'working',load_kg:i===7&&j===1?null:10+i+j,reps:10,RIR:null,estimated_1RM:null,completed:true})));
+      transaction.oncomplete = () => resolve(); transaction.onerror = () => reject(transaction.error);
+    }); db.close(); return dates;
+  });
+  const before = await storedSets();
+  await page.locator('.bottom-nav button').filter({ hasText: '種目' }).click();
+  await page.getByRole('button',{ name:/片手ダンベルロー/ }).click();
+  const trend = page.getByRole('region',{ name:'重量推移' });
+  await expect(trend.getByRole('button',{name:'直近6回',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(trend.getByLabel('記録日', { exact:true })).toHaveCount(1);
+  await expect(trend.locator('select option')).toHaveCount(6);
+  await expect(trend.locator('.weight-legend')).toContainText('左');
+  await expect(trend.locator('.weight-legend')).toContainText('右');
+  await expect(trend.locator('.weight-day-detail')).toContainText('— kg × 10回');
+  await expect(trend.locator('.weight-day-detail')).toContainText('RIR —');
+  const xs = await trend.locator('.weight-series-left circle').evaluateAll(nodes => nodes.map(node=>Number(node.getAttribute('cx'))));
+  expect(xs[1]-xs[0]).toBeGreaterThan((xs.at(-1)!-xs.at(-2)!)*3);
+  await trend.getByRole('button',{name:'3か月',exact:true}).click(); await expect(trend.locator('select option')).toHaveCount(5);
+  await trend.getByRole('button',{name:'半年',exact:true}).click(); await expect(trend.locator('select option')).toHaveCount(7);
+  await trend.getByRole('button',{name:'1年',exact:true}).click(); await expect(trend.locator('select option')).toHaveCount(8);
+  await trend.getByLabel('記録日', { exact:true }).selectOption(dates[0]); await expect(trend.locator('.weight-day-detail')).toContainText(dates[0].replaceAll('-','/'));
+  await trend.getByRole('button',{name:'直近6回',exact:true}).click();
+  const svg = trend.locator('svg'), box = await svg.boundingBox();
+  await svg.click({ position: { x:48, y:100 } });
+  await expect(trend.getByLabel('記録日', { exact:true })).toHaveValue(dates[2]);
+  expect(box!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.reload();
+  await page.locator('.bottom-nav button').filter({hasText:'種目'}).click(); await page.getByRole('button',{name:/片手ダンベルロー/}).click();
+  await expect(page.locator('.weight-trend select option')).toHaveCount(6);
+  expect(await storedSets()).toEqual(before);
+  expect(errors).toEqual([]); expect(outgoing).toEqual([]);
+});
