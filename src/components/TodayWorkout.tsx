@@ -7,6 +7,7 @@ import { db } from '../db';
 import { getPreviousExerciseSets } from '../repository';
 import { appendExerciseSet, previousWeight, renumberSets } from '../workoutEditing';
 import { isDemoMode } from '../runtimeMode';
+import { RestTimerDial } from './RestTimerDial';
 import { nextSelectableWeight } from "../weightSteps";
 import { completedLogicalSetCount, logicalSetCount, logicalSets, pendingLogicalSetCount } from "../workoutSetCounts";
 
@@ -357,24 +358,20 @@ export function TodayWorkout({ onOpenHistory }: TodayWorkoutProps) {
       <section className={`rest-view ${remainingSeconds === 0 ? "rest-finished" : ""}`} aria-label="休憩タイマー">
         {isDemoMode && <span className="demo-status">操作デモ・外部送信なし</span>}
         <span className="eyebrow" aria-live="polite">{remainingSeconds === 0 ? "休憩終了" : "休憩"}</span>
-        <div className="rest-ring" style={{ background: `conic-gradient(from -90deg, var(--accent) ${progress}%, #262629 0)` }}><div><span>{remainingSeconds === 0 ? '準備完了' : '残り時間'}</span><strong className="rest-time">{minutes}<em>:</em>{seconds}</strong><i /></div></div>
-        <p>{remainingSeconds > 0 ? "呼吸を整えて、次のセットへ" : "休憩終了。次のセットへ進めます。"}</p>
+        <div className="rest-top">
+        <RestTimerDial progress={progress} minutes={minutes} seconds={seconds} />
         <div className="rest-adjust">
           <button onClick={() => adjustRest(-15)}>−15秒</button>
           <button onClick={() => adjustRest(15)}>＋15秒</button>
         </div>
+        </div>
         {isDemoMode && remainingSeconds > 0 && <button className="demo-expire" onClick={() => update(w => ({...w,rest_end_at:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()}))}>休憩終了の光り方を見る</button>}
         <article className="next-set-card">
-          <span>次のセット</span>
           {next ? <>
             <h2>{next.exercise.exercise_name}</h2>
-            <dl>
-              <div><dt>次のセット</dt><dd>{next.set.side ? `${sideLabel(next.set.side)}・` : ""}{logicalSets(next.exercise.sets).findIndex(s => (s.pair_id ?? s.set_id) === (next.set.pair_id ?? next.set.set_id)) + 1} / {logicalSetCount(next.exercise.sets)} セット目</dd></div>
-              <div><dt>残りセット</dt><dd>{pendingLogicalSetCount(allSets(workout))}</dd></div>
-              <div><dt>次の重量</dt><dd>{next.set.actual_weight_kg ?? next.set.target_weight_kg ?? "—"} kg</dd></div>
-              <div><dt>目標回数</dt><dd>{targetReps(next.set)}回</dd></div>
-              <div><dt>目標RIR</dt><dd>{next.set.target_rir ?? "—"}</dd></div>
-            </dl>
+            <p className="rest-set-position">{next.set.side ? `${sideLabel(next.set.side)}・` : ""}{logicalSets(next.exercise.sets).findIndex(s => (s.pair_id ?? s.set_id) === (next.set.pair_id ?? next.set.set_id)) + 1} / {logicalSetCount(next.exercise.sets)} セット目</p>
+            <p className="rest-dose"><b>{next.set.actual_weight_kg ?? next.set.target_weight_kg ?? "—"}</b><small>kg</small><span>×</span><b>{targetReps(next.set)}</b><small>回</small></p>
+            <p className="rest-secondary">目標RIR {next.set.target_rir ?? "—"}　·　全体の残り {pendingLogicalSetCount(allSets(workout))}セット</p>
           </> : <h2>全セット完了</h2>}
         </article>
         <button className="primary-action" onClick={resumeWorkout}>{next ? "次のセットへ" : "トレーニングへ戻る"}</button>

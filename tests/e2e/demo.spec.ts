@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
-test('demo isolates data and never requests cloud or official save', async ({page}) => {
+test('demo isolates data and never requests cloud or official save', async ({page, baseURL}) => {
   const outgoing: string[] = [];
   const errors: string[] = [];
-  page.on('request',r => {if(new URL(r.url()).origin !== 'http://127.0.0.1:4174' || r.url().includes('/api/') || r.url().includes('/data/')) outgoing.push(r.url());});
+  page.on('request',r => {if(new URL(r.url()).origin !== new URL(baseURL!).origin || r.url().includes('/api/') || r.url().includes('/data/')) outgoing.push(r.url());});
   page.on('pageerror',e => errors.push(e.message));
   await page.goto('/?demo=1');
   await expect(page.getByLabel('休憩タイマー')).toBeVisible();
