@@ -421,6 +421,7 @@ button:focus-visible, summary:focus-visible { outline: 3px solid rgba(255,106,0,
 .rest-light-point { fill: #ffe4c7; filter: drop-shadow(0 0 6px #ff9b3b); }
 .rest-time { display: flex; align-items: baseline; gap: 6px; color: #fff; font-family: Arial, system-ui, sans-serif; font-size: 76px; font-style: italic; font-synthesis: style; font-weight: 900; letter-spacing: .01em; font-variant-numeric: tabular-nums; padding-right: 12px; text-shadow: none; }
 .rest-time em { color: #ffd2a8; font-style: inherit; font-weight: inherit; }
+.rest-time > span { color: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; }
 .rest-adjust { width: auto; gap: 14px; }
 .rest-adjust button { display: flex; align-items: center; justify-content: center; gap: 12px; min-width: 108px; min-height: 48px; border: 1px solid #a77b554d; border-radius: 14px; background: linear-gradient(160deg, #6e4a322e, #21181366); color: #f1e1d3; padding: 9px 16px; font-size: 16px; }
 .rest-adjust button > span { color: #ffc48b; font-size: 23px; font-weight: 500; line-height: 1; }

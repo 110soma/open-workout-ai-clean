@@ -18,6 +18,7 @@ test('approved rest arc preserves controls and stops flashing after completion',
   });
   expect(movement).toBeGreaterThan(3);
   expect(await clock.evaluate(element => parseFloat(getComputedStyle(element).letterSpacing))).toBeGreaterThan(0);
+  expect(await clock.locator('span').first().evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(66);
   const before = await clock.textContent();
   await timer.getByRole('button', { name: '＋15秒', exact: true }).click();
   await expect(clock).not.toHaveText(before!);
