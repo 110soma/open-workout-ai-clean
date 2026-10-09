@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2] - 2026-10-09
+
+- Added daily maximum-weight line charts with real date spacing and last-six / three-month / six-month / one-year ranges.
+- Separated left/right and unknown-side series, with selectable daily set details and preserved missing weights/RIR.
+- Added regression coverage for range changes, touch selection, empty history, navigation clearance and record integrity.
+- App version display now follows package metadata; setup ZIP links point to v0.1.2.
+- No database migrations or recording/synchronization changes.
+
 ## [0.1.1] - 2026-10-09
 
 - Redesigned the rest timer with a bottom-open 270-degree arc, a smoothly moving endpoint light, and spacious italic digits.

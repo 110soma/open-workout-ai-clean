@@ -10,6 +10,7 @@ import { supabase } from './sync/supabaseClient';
 import { CloudStatusCard } from './components/CloudStatusCard';
 import { isDemoMode } from './runtimeMode';
 import { prepareDemo } from './demo';
+import { version } from '../package.json';
 
 type Tab = "home" | "today" | "exercises";
 
@@ -71,7 +72,7 @@ function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <div><h1>Open Workout AI <b>v0.1</b></h1></div>
+        <div><h1>Open Workout AI <b>v{version}</b></h1></div>
         {isDemoMode ? <span className="demo-status">デモ・送信なし</span> : <CompactCloudStatus />}
       </header>
 
