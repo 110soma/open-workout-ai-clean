@@ -14,7 +14,7 @@ It is not only a workout tracker. It supports the loop:
 
 **Plan → Execute → Record → Validate → Learn → Next Plan**
 
-> Status: [v0.1.0 is publicly released](https://github.com/110soma/open-workout-ai-clean/releases/tag/v0.1.0).
+> Latest release: [GitHub Releases](https://github.com/110soma/open-workout-ai-clean/releases/latest). See [v0.1.1 release notes](docs/release-notes-v0.1.1.md).
 
 > This public repository is independent of the maintainer's private daily-use environment. Examples are synthetic. Historical audit documents describe pre-release work, not the current publication status.
 
@@ -119,7 +119,7 @@ Read [SECURITY.md](SECURITY.md). Real credentials, real workout history, persona
 
 ## Roadmap
 
-See [OSS roadmap](docs/oss-roadmap.md) and [v0.1.0 release candidate notes](docs/release-notes-v0.1.0-rc.md).
+See [OSS roadmap](docs/oss-roadmap.md) and [v0.1.1 release notes](docs/release-notes-v0.1.1.md).
 
 ## 日本語の短い説明
 

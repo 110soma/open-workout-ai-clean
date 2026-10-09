@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1] - 2026-10-09
+
+- Redesigned the rest timer with a bottom-open 270-degree arc, a smoothly moving endpoint light, and spacious italic digits.
+- Kept full-screen completion feedback as a single three-second glow with reduced-motion support.
+- Improved next-set details, rep-range spacing and the plus/minus 15-second controls without changing timing or persistence.
+- Added Windows beginner setup and troubleshooting guides in Japanese.
+- Added timer presentation regression tests and separated synthetic PR merge metadata from publishable-history auditing.
+- No database migration or credential changes are required for this update.
+
 ## [Unreleased]
 
 - Confirmed the private GitHub repository and hosted CI before any public release.

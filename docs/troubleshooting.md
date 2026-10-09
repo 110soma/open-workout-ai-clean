@@ -1,4 +1,4 @@
-# 困ったとき（Windows／v0.1.0）
+# 困ったとき（Windows／v0.1.1）
 
 [最初から](setup.md)／[Supabase接続](supabase-setup-ja.md)。失敗しても実績や表を削除しません。画面やエラーを公開するときはメール、UID、キー、パスワード、実記録を隠します。
 

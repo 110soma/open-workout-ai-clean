@@ -1,4 +1,4 @@
-# Windowsではじめる Open Workout AI v0.1.0
+# Windowsではじめる Open Workout AI v0.1.1
 
 上から進めると架空のトレーニングを試せます。Gitやプログラミングの知識は不要です。**最初はDemoだけを試してください。**
 
@@ -13,9 +13,9 @@ Demo（操作見本）は端末内だけに保存します。Supabase（自分�
 
 ### A1. ファイルを入手する
 
-- **目的：** 公開済みv0.1.0をPCへ保存します。
-- **操作場所：** [GitHubのファイル置き場](https://github.com/110soma/open-workout-ai-clean) → [v0.1.0のRelease（公開版）](https://github.com/110soma/open-workout-ai-clean/releases/tag/v0.1.0)。
-- **入力・操作：** **Assets → Source code (zip)** をクリック。[ZIP直接リンク](https://github.com/110soma/open-workout-ai-clean/archive/refs/tags/v0.1.0.zip)でも同じ版です。緑のCodeボタンのZIPは最新版なので今回は使いません。
+- **目的：** 公開済みv0.1.1をPCへ保存します。
+- **操作場所：** [GitHubのファイル置き場](https://github.com/110soma/open-workout-ai-clean) → [v0.1.1のRelease（公開版）](https://github.com/110soma/open-workout-ai-clean/releases/tag/v0.1.1)。
+- **入力・操作：** **Assets → Source code (zip)** をクリック。[ZIP直接リンク](https://github.com/110soma/open-workout-ai-clean/archive/refs/tags/v0.1.1.zip)でも同じ版です。緑のCodeボタンのZIPは最新版なので今回は使いません。
 - **正常：** ダウンロードフォルダにZIPができます。
 - **失敗：** ネット接続を確認しReleaseを開き直します。GitHubへのログインは不要です。
 
@@ -23,7 +23,7 @@ Demo（操作見本）は端末内だけに保存します。Supabase（自分�
 
 - **目的：** ZIPを実行できる普通のフォルダにします。
 - **操作場所：** エクスプローラーの「ダウンロード」。ZIPを右クリック → **すべて展開**。
-- **入力・操作：** 「参照」でドキュメント内など自分で分かる場所を選び「展開」。中の `open-workout-ai-clean-0.1.0` フォルダを開きます。ZIPの中から直接実行しません。
+- **入力・操作：** 「参照」でドキュメント内など自分で分かる場所を選び「展開」。中の `open-workout-ai-clean-0.1.1` フォルダを開きます。ZIPの中から直接実行しません。
 - **正常：** 同じ階層に `package.json`、`package-lock.json`、`src`、`scripts`、`supabase` が見えます。この階層を「アプリフォルダ」と呼びます。`.env.example` もあります。拡張子は「表示 → 表示 → ファイル名拡張子」で表示できます（Windows 10は「表示 → ファイル名拡張子」）。
 - **失敗：** `package.json` がなければ、もう一段内側を開きます。[フォルダ違い](troubleshooting.md#folder)。
 
