@@ -350,7 +350,7 @@ export function TodayWorkout({ onOpenHistory }: TodayWorkoutProps) {
   if (workout.rest_end_at) {
     const remainingSeconds = Math.max(0, Math.ceil((new Date(workout.rest_end_at).getTime() - now) / 1000));
     const restExercise = workout.exercises.find((exercise) => exercise.sets.some((set) => set.set_id === workout.last_completed_set_id));
-    const progress = Math.min(100, Math.max(0, remainingSeconds / Math.max(1, restExercise?.rest_sec ?? remainingSeconds) * 100));
+    const progress = Math.min(100, Math.max(0, (new Date(workout.rest_end_at).getTime() - now) / 1000 / Math.max(1, restExercise?.rest_sec ?? remainingSeconds) * 100));
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = String(remainingSeconds % 60).padStart(2, "0");
     const next = pendingSets[0];
@@ -359,10 +359,10 @@ export function TodayWorkout({ onOpenHistory }: TodayWorkoutProps) {
         {isDemoMode && <span className="demo-status">操作デモ・外部送信なし</span>}
         <span className="eyebrow" aria-live="polite">{remainingSeconds === 0 ? "休憩終了" : "休憩"}</span>
         <div className="rest-top">
-        <RestTimerDial progress={progress} minutes={minutes} seconds={seconds} />
+        <RestTimerDial progress={progress} minutes={minutes} seconds={seconds} endAt={workout.rest_end_at} duration={Math.max(1, restExercise?.rest_sec ?? remainingSeconds)} />
         <div className="rest-adjust">
-          <button onClick={() => adjustRest(-15)}>−15秒</button>
-          <button onClick={() => adjustRest(15)}>＋15秒</button>
+          <button aria-label="−15秒" onClick={() => adjustRest(-15)}><span aria-hidden="true">−</span><b>15<small>秒</small></b></button>
+          <button aria-label="＋15秒" onClick={() => adjustRest(15)}><span aria-hidden="true">＋</span><b>15<small>秒</small></b></button>
         </div>
         </div>
         {isDemoMode && remainingSeconds > 0 && <button className="demo-expire" onClick={() => update(w => ({...w,rest_end_at:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()}))}>休憩終了の光り方を見る</button>}
